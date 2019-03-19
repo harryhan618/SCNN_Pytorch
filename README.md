@@ -65,3 +65,12 @@ python demo_test.py [--visualize] -i demo.jpg -w experiments/exp0/exp0.pth
 
 
 - My model is trained with `torch.nn.DataParallel`. Modify it according to your hardware configuration.
+
+
+
+
+
+## Acknowledgement
+
+This repos is build based on [official implementation](<https://github.com/XingangPan/SCNN>).
+
