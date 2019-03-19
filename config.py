@@ -1,0 +1,1 @@
+CULane_path = "/home/lion/Dataset/CULane/data/CULane"
