@@ -34,8 +34,12 @@ Then modify the path of `CULane_path` in `config.py`.
 For single image demo test:
 
 ```
-python demo_test.py -i path/to/img -w path/to/model/weight [--visualize]
+python demo_test.py [--visualize] \
+					-i demo.jpg \
+					-w experiments/exp0/exp0.pth
 ```
+
+![](demo_result.jpg "demo_result")
 
 
 
