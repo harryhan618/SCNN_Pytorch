@@ -25,7 +25,7 @@ CULane_path
 └── list
 ```
 
-Then modify the path of `CULane_path` in `config.py`.
+Then modify the path of `CULane_path` in `config.py`. **Note: absolute path is encouraged.**
 
 
 
@@ -37,7 +37,7 @@ For single image demo test:
 python demo_test.py [--visualize] -i demo.jpg -w experiments/exp0/exp0.pth
 ```
 
-![](demo_result.jpg "demo_result")
+![](demo/demo_result.jpg "demo_result")
 
 
 
