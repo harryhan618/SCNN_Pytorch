@@ -61,7 +61,7 @@ python demo_test.py [--visualize] -i demo.jpg -w experiments/exp0/exp0.pth
    tensorboard --logdir='experiments/exp0' > experiments/exp0/board.txt 2>&1 &
    ```
 
-
+**Note**
 
 
 - My model is trained with `torch.nn.DataParallel`. Modify it according to your hardware configuration.
