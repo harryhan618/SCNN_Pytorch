@@ -34,8 +34,10 @@ Then modify the path of `CULane_path` in `config.py`. **Note: absolute path is e
 For single image demo test:
 
 ```
-python demo_test.py [--visualize] -i demo.jpg -w experiments/exp0/exp0.pth
+python demo_test.py [--visualize] -i demo.jpg -w experiments/exp0/exp0_best.pth
 ```
+
+**An unevaluated trained model can be download [here](https://drive.google.com/file/d/1AsAGWFEgh7d8f--jQcz6QMlqxNvHA9Gy/view?usp=sharing) .**
 
 ![](demo/demo_result.jpg "demo_result")
 
@@ -65,7 +67,7 @@ python demo_test.py [--visualize] -i demo.jpg -w experiments/exp0/exp0.pth
 
 
 - My model is trained with `torch.nn.DataParallel`. Modify it according to your hardware configuration.
-- Currently the backbone is vgg16 from torchvision. Several modification is done according to paper, i.e. dilation of last three conv layer is changed to 2.
+- Currently the backbone is vgg16 from torchvision. Several modifications are done according to paper, i.e. dilation of last three conv layer is changed to 2.
 
 
 
