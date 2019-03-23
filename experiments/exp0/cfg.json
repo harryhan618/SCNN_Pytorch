@@ -1,0 +1,17 @@
+{
+  "device": "cuda:0",
+  "MAX_ITER": 90000,
+
+  "dataset": {
+    "batch_size": 16
+  },
+
+  "optim": {
+    "lr": 1e-2,
+    "momentum": 0.9,
+    "weight_decay": 1e-04,
+    "nesterov": false
+  }
+
+
+}
