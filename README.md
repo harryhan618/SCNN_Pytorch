@@ -67,7 +67,7 @@ python demo_test.py [--visualize] -i demo.jpg -w experiments/exp0/exp0_best.pth
 
 
 - My model is trained with `torch.nn.DataParallel`. Modify it according to your hardware configuration.
-- Currently the backbone is vgg16 from torchvision. Several modifications are done according to paper, i.e. dilation of last three conv layer is changed to 2.
+- Currently the backbone is vgg16 from torchvision. Several modifications are done according to paper, i.e., i). dilation of last three conv layer is changed to 2, ii). last two maxpooling layer is removed.
 
 
 
