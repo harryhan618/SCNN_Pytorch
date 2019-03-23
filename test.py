@@ -1,5 +1,4 @@
 import argparse
-import json
 import os
 
 import torch
@@ -9,16 +8,14 @@ from config import *
 from dataset.CULane import CULane
 from net import SCNN
 
+from tqdm import tqdm
 from utils.transforms import *
 from utils.prob2lines import getLane
 
 # ------------ config ------------
 exp_dir = "./experiments/exp0"
 
-with open(os.path.join(exp_dir, "cfg.json")) as f:
-    exp_cfg = json.load(f)
-
-device = torch.device(exp_cfg['device'])
+device = torch.device('cuda')
 
 
 def split_path(path):
@@ -36,10 +33,13 @@ def split_path(path):
 
 
 # ------------ data and model ------------
-transform_val = Compose(Resize((800, 288)), ToTensor(),
-                        Normalize(mean=(0.3598, 0.3653, 0.3662), std=(0.2573, 0.2663, 0.2756)))
-val_dataset = CULane(CULane_path, "val", transform_val)
-val_loader = DataLoader(val_dataset, batch_size=8, collate_fn=val_dataset.collate, num_workers=4)
+transform = Compose(Resize((800, 288)), ToTensor(),
+                    Normalize(mean=(0.3598, 0.3653, 0.3662), std=(0.2573, 0.2663, 0.2756)))
+# val_dataset = CULane(CULane_path, "val", transform)
+# val_loader = DataLoader(val_dataset, batch_size=8, collate_fn=val_dataset.collate, num_workers=4)
+test_dataset = CULane(CULane_path, "test", transform)
+test_loader = DataLoader(test_dataset, batch_size=8, collate_fn=test_dataset.collate, num_workers=4)
+
 
 net = SCNN(pretrained=False)
 save_name = os.path.join(exp_dir, 'best.pth')
@@ -54,8 +54,9 @@ out_path = os.path.join(exp_dir, "coord_output")
 if not os.path.exists(out_path):
     os.mkdir(out_path)
 
+progressbar = tqdm(range(len(test_loader)))
 with torch.no_grad():
-    for batch_idx, sample in enumerate(val_loader):
+    for batch_idx, sample in enumerate(test_loader):
         img = sample['img'].to(device)
         img_name = sample['img_name']
 
@@ -81,6 +82,9 @@ with torch.no_grad():
                     for (x, y) in l:
                         print("{} {}".format(x, y), end=" ", file=f)
                     print(file=f)
+
+        progressbar.update(1)
+progressbar.close()
 
 
 def parse_args():

@@ -37,7 +37,9 @@ class SCNN(nn.Module):
             loss_exist = self.bce_loss(exist_pred, exist_gt) / img.shape[0]
             loss = loss_seg * self.scale_seg + loss_exist * self.scale_exist
         else:
-            loss_seg = loss_exist = loss = 0
+            loss_seg = torch.tensor(0, dtype=img.dtype, device=img.device)
+            loss_exist = torch.tensor(0, dtype=img.dtype, device=img.device)
+            loss = torch.tensor(0, dtype=img.dtype, device=img.device)
 
         return seg_pred, exist_pred, loss_seg, loss_exist, loss
 
@@ -136,6 +138,12 @@ if __name__ == "__main__":
     import torch
 
     sc = SCNN()
+    for k in sc.state_dict().keys():
+        print(k)
+
+    print('---------------------------')
+    print(sc)
+    print(sc.state_dict()['backbone.0.bias'].shape)
     x = torch.rand(2, 3, 288, 800)
     y = sc(x, None, None)
     for i in y:
