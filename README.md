@@ -49,7 +49,7 @@ python demo_test.py [--visualize] -i demo.jpg -w experiments/exp0/exp0_best.pth
 
 1. Specify an experiment directory, e.g. `experiments/exp0`.  Assign the path to variable `exp_dir` in `train.py`.
 
-2. Modify the hyperparameters in `cfg.json`.
+2. Modify the hyperparameters in `experiments/exp0/cfg.json`.
 
 3. Start training:
 
@@ -60,7 +60,7 @@ python demo_test.py [--visualize] -i demo.jpg -w experiments/exp0/exp0_best.pth
 4. Monitor on tensorboard:
 
    ```
-   tensorboard --logdir='experiments/exp0' > experiments/exp0/board.txt 2>&1 &
+   tensorboard --logdir='experiments/exp0' > experiments/exp0/board.log 2>&1 &
    ```
 
 **Note**
