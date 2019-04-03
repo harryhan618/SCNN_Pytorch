@@ -13,13 +13,15 @@ class SCNN(nn.Module):
         super(SCNN, self).__init__()
         self.pretrained = pretrained
         self.net_init(ms_ks)
+        if not pretrained:
+            self.weight_init()
 
-        self.scale_background = 0.4
+        self.scale_background = 0.35 # 0.4
         self.scale_seg = 1.0
-        self.scale_exist = 0.1
+        self.scale_exist = 0.15
 
         self.ce_loss = nn.CrossEntropyLoss(weight=torch.tensor([self.scale_background, 1, 1, 1, 1]))
-        self.bce_loss = nn.BCELoss(reduction='sum')
+        self.bce_loss = nn.BCEWithLogitsLoss(reduction='sum')
 
     def forward(self, img, seg_gt=None, exist_gt=None):
         x = self.backbone(img)
@@ -130,7 +132,7 @@ class SCNN(nn.Module):
             if isinstance(m, nn.Conv2d):
                 m.reset_parameters()
             elif isinstance(m, nn.BatchNorm2d):
-                m.weight.data[:] = 1
+                m.weight.data[:] = 1.
                 m.bias.data.zero_()
 
 
