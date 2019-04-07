@@ -37,7 +37,7 @@ For single image demo test:
 python demo_test.py [--visualize] -i demo.jpg -w experiments/exp0/exp0_best.pth
 ```
 
-**An unevaluated trained model can be download [here](https://drive.google.com/file/d/1AsAGWFEgh7d8f--jQcz6QMlqxNvHA9Gy/view?usp=sharing) .**
+**An unevaluated trained model for CULane Dataset can be download [here](https://drive.google.com/file/d/1IlPJ7zxyiage5oKcHxojufoxxleq5JoH) .**
 
 ![](demo/demo_result.jpg "demo_result")
 
