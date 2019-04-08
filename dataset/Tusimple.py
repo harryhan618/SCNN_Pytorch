@@ -192,8 +192,3 @@ class Tusimple(Dataset):
                    'img_name': [x['img_name'] for x in batch]}
 
         return samples
-
-
-if __name__ == "__main__":
-    data = Tusimple(r"E:\Autonomous car research\Driving_Dataset\tusimple", "test")
-    data.generate_label()
