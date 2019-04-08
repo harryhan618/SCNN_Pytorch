@@ -8,6 +8,16 @@ from torch.utils.data import Dataset
 
 
 class Tusimple(Dataset):
+    """
+    image_set is splitted into three partitions: train, val, test.
+    train includes label_data_0313.json, label_data_0601.json
+    val includes label_data_0531.json
+    test includes test_label.json
+    """
+    TRAIN_SET = ['label_data_0313.json', 'label_data_0601.json']
+    VAL_SET = ['label_data_0531.json']
+    TEST_SET = ['test_label.json']
+
     def __init__(self, path, image_set, transforms=None):
         super(Tusimple, self).__init__()
         assert image_set in ('train', 'val', 'test'), "image_set is not valid!"
@@ -15,6 +25,9 @@ class Tusimple(Dataset):
         self.image_set = image_set
         self.transforms = transforms
 
+        if not os.path.exists(os.path.join(path, "seg_label")):
+            print("Label is going to get generated into dir: {} ...".format(os.path.join(path, "seg_label")))
+            self.generate_label()
         self.createIndex()
 
     def createIndex(self):
@@ -22,7 +35,10 @@ class Tusimple(Dataset):
         self.segLabel_list = []
         self.exist_list = []
 
-        listfile = os.path.join(self.data_dir_path, "seg_label", "list", "list_gt.txt")
+        listfile = os.path.join(self.data_dir_path, "seg_label", "list", "{}_gt.txt".format(self.image_set))
+        if not os.path.exists(listfile):
+            raise FileNotFoundError("List file doesn't exist. Label has to be generated! ...")
+
         with open(listfile) as f:
             for line in f:
                 line = line.strip()
@@ -54,22 +70,47 @@ class Tusimple(Dataset):
         return len(self.img_list)
 
     def generate_label(self):
+        save_dir = os.path.join(self.data_dir_path, "seg_label")
+        os.makedirs(save_dir, exist_ok=True)
+
+        # --------- merge json into one file ---------
+        with open(os.path.join(save_dir, "train.json"), "w") as outfile:
+            for json_name in self.TRAIN_SET:
+                with open(os.path.join(self.data_dir_path, json_name)) as infile:
+                    for line in infile:
+                        outfile.write(line)
+
+        with open(os.path.join(save_dir, "val.json"), "w") as outfile:
+            for json_name in self.VAL_SET:
+                with open(os.path.join(self.data_dir_path, json_name)) as infile:
+                    for line in infile:
+                        outfile.write(line)
+
+        with open(os.path.join(save_dir, "test.json"), "w") as outfile:
+            for json_name in self.TEST_SET:
+                with open(os.path.join(self.data_dir_path, json_name)) as infile:
+                    for line in infile:
+                        outfile.write(line)
+
+        self._gen_label_for_json('train')
+        self._gen_label_for_json('val')
+        self._gen_label_for_json('test')
+
+    def _gen_label_for_json(self, image_set):
         H, W = 720, 1280
         SEG_WIDTH = 30
         save_dir = "seg_label"
 
         os.makedirs(os.path.join(self.data_dir_path, save_dir, "list"), exist_ok=True)
-        list_f = open(os.path.join(self.data_dir_path, save_dir, "list", "list_gt.txt"), "w")
+        list_f = open(os.path.join(self.data_dir_path, save_dir, "list", "{}_gt.txt".format(image_set)), "w")
 
-        json_path = os.path.join(self.data_dir_path, "label_data.json")
+        json_path = os.path.join(self.data_dir_path, save_dir, "{}.json".format(image_set))
         with open(json_path) as f:
             for line in f:
                 label = json.loads(line)
-                img_path = label['raw_file']
-                seg_img = np.zeros((H, W, 3))
-                list_str = [] # str to be written to list.txt
 
                 # ---------- clean and sort lanes -------------
+                lanes = []
                 _lanes = []
                 slope = [] # identify 1st, 2nd, 3rd, 4th lane through slope
                 for i in range(len(label['lanes'])):
@@ -92,16 +133,18 @@ class Tusimple(Dataset):
                         idx_3 = i
                         idx_4 = i+1 if i+1 < len(slope) else None
                         break
-                lanes = []
                 lanes.append([] if idx_1 is None else _lanes[idx_1])
                 lanes.append([] if idx_2 is None else _lanes[idx_2])
                 lanes.append([] if idx_3 is None else _lanes[idx_3])
                 lanes.append([] if idx_4 is None else _lanes[idx_4])
                 # ---------------------------------------------
 
+                img_path = label['raw_file']
+                seg_img = np.zeros((H, W, 3))
+                list_str = []  # str to be written to list.txt
                 for i in range(len(lanes)):
                     coords = lanes[i]
-                    if len(coords) < 4:
+                    if coords is None or len(coords) < 4:
                         list_str.append('0')
                         continue
                     for j in range(len(coords)-1):
@@ -152,5 +195,5 @@ class Tusimple(Dataset):
 
 
 if __name__ == "__main__":
-    data = Tusimple(r"E:\Autonomous car research\Driving_Dataset\tusimple")
+    data = Tusimple(r"E:\Autonomous car research\Driving_Dataset\tusimple", "test")
     data.generate_label()
