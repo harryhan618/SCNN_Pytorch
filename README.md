@@ -10,7 +10,7 @@ This repository contains a re-implementation in Pytorch.
 
 ### CULane
 
-The dataset is available in [CULane](https://xingangpan.github.io/projects/CULane.html). Please download and unzip the files in one folder, which later is represented as `CULane_path`. 
+The dataset is available in [CULane](https://xingangpan.github.io/projects/CULane.html). Please download and unzip the files in one folder, which later is represented as `CULane_path`.  Then modify the path of `CULane_path` in `config.py`.
 ```
 CULane_path
 ├── driver_100_30frame
@@ -24,12 +24,12 @@ CULane_path
 └── list
 ```
 
-Then modify the path of `CULane_path` in `config.py`. **Note: absolute path is encouraged.**
+**Note: absolute path is encouraged.**
 
 
 
 ### Tusimple
-The dataset is available in [here](https://github.com/TuSimple/tusimple-benchmark/issues/3). Please download and unzip the files in one folder, which later is represented as `Tusimple_path`.
+The dataset is available in [here](https://github.com/TuSimple/tusimple-benchmark/issues/3). Please download and unzip the files in one folder, which later is represented as `Tusimple_path`. Then modify the path of `Tusimple_path` in `config.py`.
 ```
 Tusimple_path
 ├── clips
