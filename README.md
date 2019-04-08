@@ -10,8 +10,7 @@ This repository contains a re-implementation in Pytorch.
 
 ### CULane
 
-The dataset is available in [CULane](<https://xingangpan.github.io/projects/CULane.html>). Please download and unzip the files in one folder, which later is represented as `CULane_path`. 
-
+The dataset is available in [CULane](https://xingangpan.github.io/projects/CULane.html). Please download and unzip the files in one folder, which later is represented as `CULane_path`. 
 ```
 CULane_path
 ├── driver_100_30frame
@@ -29,12 +28,27 @@ Then modify the path of `CULane_path` in `config.py`. **Note: absolute path is e
 
 
 
+### Tusimple
+The dataset is available in [here](https://github.com/TuSimple/tusimple-benchmark/issues/3). Please download and unzip the files in one folder, which later is represented as `Tusimple_path`.
+```
+Tusimple_path
+├── clips
+├── label_data_0313.json
+├── label_data_0531.json
+├── label_data_0601.json
+└── test_label.json
+```
+
+**Note:  seg\_label images and gt.txt, as in CULane dataset format,  will be generated the first time `Tusimple` object is instantiated. It may take time.**
+
+
+
 ## Demo Test
 
 For single image demo test:
 
 ```
-python demo_test.py [--visualize] -i demo.jpg -w experiments/exp0/exp0_best.pth
+python demo_test.py -i demo/demo.jpg -w experiments/exp0/exp0_best.pth [--visualize / -v]
 ```
 
 **An unevaluated trained model for CULane Dataset can be download [here](https://drive.google.com/file/d/1IlPJ7zxyiage5oKcHxojufoxxleq5JoH) .**
@@ -54,7 +68,7 @@ python demo_test.py [--visualize] -i demo.jpg -w experiments/exp0/exp0_best.pth
 3. Start training:
 
    ```python
-   python train.py [-r]
+   python train.py [--resume / -r]
    ```
 
 4. Monitor on tensorboard:
@@ -67,7 +81,7 @@ python demo_test.py [--visualize] -i demo.jpg -w experiments/exp0/exp0_best.pth
 
 
 - My model is trained with `torch.nn.DataParallel`. Modify it according to your hardware configuration.
-- Currently the backbone is vgg16 from torchvision. Several modifications are done according to paper, i.e., i). dilation of last three conv layer is changed to 2, ii). last two maxpooling layer is removed.
+- Currently the backbone is vgg16 from torchvision. Several modifications are done to the torchvision model according to paper, i.e., i). dilation of last three conv layer is changed to 2, ii). last two maxpooling layer is removed.
 
 
 

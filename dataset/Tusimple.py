@@ -93,8 +93,11 @@ class Tusimple(Dataset):
                         outfile.write(line)
 
         self._gen_label_for_json('train')
+        print("train set is done")
         self._gen_label_for_json('val')
+        print("val set is done")
         self._gen_label_for_json('test')
+        print("test set is done")
 
     def _gen_label_for_json(self, image_set):
         H, W = 720, 1280
@@ -144,7 +147,7 @@ class Tusimple(Dataset):
                 list_str = []  # str to be written to list.txt
                 for i in range(len(lanes)):
                     coords = lanes[i]
-                    if coords is None or len(coords) < 4:
+                    if len(coords) < 4:
                         list_str.append('0')
                         continue
                     for j in range(len(coords)-1):
@@ -157,7 +160,7 @@ class Tusimple(Dataset):
                 seg_path = os.path.join(seg_path, img_name[:-3]+"png")
                 cv2.imwrite(seg_path, seg_img)
 
-                seg_path = "/".join([save_dir, *img_path.split("/")[1:3], img_name])
+                seg_path = "/".join([save_dir, *img_path.split("/")[1:3], img_name[:-3]+"png"])
                 if seg_path[0] != '/':
                     seg_path = '/' + seg_path
                 if img_path[0] != '/':

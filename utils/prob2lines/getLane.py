@@ -11,7 +11,7 @@ def getLane(prob_map, y_px_gap, pts, thresh, resize_shape=None):
 
     Return:
     ----------
-    coords: x coords bottom up every 20px, 0 for non-exist, in resized shape
+    coords: x coords bottom up every y_px_gap px, 0 for non-exist, in resized shape
     """
     if resize_shape is None:
         resize_shape = prob_map.shape
@@ -49,7 +49,7 @@ def prob2lines(seg_pred, exist, resize_shape=None, smooth=True, y_px_gap=20, pts
     coordinates: [x, y] list of lanes, e.g.: [ [[9, 569], [50, 549]] ,[[630, 569], [647, 549]] ]
     """
     if resize_shape is None:
-        resize_shape = seg_pred.shape[1:]
+        resize_shape = seg_pred.shape[1:] # seg_pred (5, h, w)
     _, h, w = seg_pred.shape
     H, W = resize_shape
     coordinates = []
