@@ -2,7 +2,7 @@ import argparse
 import cv2
 import torch
 
-from net import SCNN
+from model import SCNN
 from utils.prob2lines import getLane
 from utils.transforms import *
 
@@ -23,7 +23,8 @@ def parse_args():
 def main():
     args = parse_args()
     img_path = args.img_path
-    weight_path = args.weight_path
+    # weight_path = args.weight_path
+    weight_path = r"E:\Programming\Python\vision\SCNN\experiments\exp0\exp0_best.pth"
 
     img = cv2.imread(img_path)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)

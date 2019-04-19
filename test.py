@@ -6,14 +6,14 @@ from torch.utils.data import DataLoader
 
 from config import *
 from dataset.CULane import CULane
-from net import SCNN
+from model import SCNN
 
 from tqdm import tqdm
 from utils.transforms import *
 from utils.prob2lines import getLane
 
 # ------------ config ------------
-exp_dir = "./experiments/exp0"
+exp_dir = "./experiments/exp1"
 
 device = torch.device('cuda')
 
@@ -35,6 +35,8 @@ def split_path(path):
 # ------------ data and model ------------
 transform = Compose(Resize((800, 288)), ToTensor(),
                     Normalize(mean=(0.3598, 0.3653, 0.3662), std=(0.2573, 0.2663, 0.2756)))
+transform = Compose(Resize((800, 288)), ToTensor(),
+                    Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]))
 # val_dataset = CULane(CULane_path, "val", transform)
 # val_loader = DataLoader(val_dataset, batch_size=8, collate_fn=val_dataset.collate, num_workers=4)
 test_dataset = CULane(CULane_path, "test", transform)
@@ -42,8 +44,9 @@ test_loader = DataLoader(test_dataset, batch_size=8, collate_fn=test_dataset.col
 
 
 net = SCNN(pretrained=False)
-save_name = os.path.join(exp_dir, 'best.pth')
+save_name = os.path.join(exp_dir, exp_dir.split('/')[-1] + '_best.pth')
 save_dict = torch.load(save_name, map_location='cpu')
+print("loading", save_name, "......")
 net.load_state_dict(save_dict['net'])
 net.to(device)
 net.eval()

@@ -43,6 +43,8 @@ Tusimple_path
 
 
 
+
+
 ## Demo Test
 
 For single image demo test:
@@ -68,7 +70,7 @@ python demo_test.py -i demo/demo.jpg -w experiments/exp0/exp0_best.pth [--visual
 3. Start training:
 
    ```python
-   python train.py [--resume / -r]
+   python train.py [-r]
    ```
 
 4. Monitor on tensorboard:

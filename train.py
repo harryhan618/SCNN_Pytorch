@@ -10,13 +10,13 @@ from tqdm import tqdm
 
 from config import *
 from dataset.CULane import CULane
-from net import SCNN
+from model import SCNN
 from utils.tensorboard import TensorBoard
 from utils.transforms import *
 from utils.lr_scheduler import PolyLR
 
 # ------------ config ------------
-exp_dir = "./experiments/exp0"
+exp_dir = "./experiments/exp1"
 
 with open(os.path.join(exp_dir, "cfg.json")) as f:
     exp_cfg = json.load(f)
@@ -27,17 +27,22 @@ tensorboard = TensorBoard(exp_dir)
 # ------------ train data ------------
 transform_train = Compose(Resize((800, 288)), Rotation(2), ToTensor(),
                           Normalize(mean=(0.3598, 0.3653, 0.3662), std=(0.2573, 0.2663, 0.2756)))
+transform_train = Compose(Resize((800, 288)), Rotation(2), ToTensor(),
+                          Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]))
 train_dataset = CULane(CULane_path, "train", transform_train)
-train_loader = DataLoader(train_dataset, **exp_cfg['dataset'], shuffle=True, collate_fn=train_dataset.collate, num_workers=4)
+train_loader = DataLoader(train_dataset, **exp_cfg['dataset'], shuffle=True, collate_fn=train_dataset.collate, num_workers=8)
 
 # ------------ val data ------------
 transform_val = Compose(Resize((800, 288)), ToTensor(),
                         Normalize(mean=(0.3598, 0.3653, 0.3662), std=(0.2573, 0.2663, 0.2756)))
+transform_val = Compose(Resize((800, 288)), ToTensor(),
+                        Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]))
 val_dataset = CULane(CULane_path, "val", transform_val)
 val_loader = DataLoader(val_dataset, batch_size=8, collate_fn=train_dataset.collate, num_workers=4)
 
 # ------------ preparation ------------
-net = SCNN(pretrained=False).to(device)
+net = SCNN(pretrained=True)
+net = net.to(device)
 net = torch.nn.DataParallel(net)
 
 optimizer = optim.SGD(net.parameters(), **exp_cfg['optim'])
@@ -66,7 +71,8 @@ def train(epoch):
             loss = loss.sum()
         loss.backward()
         optimizer.step()
-        lr_scheduler.step(epoch * len(train_loader) + batch_idx)
+        if batch_idx % 5 == 4:
+            lr_scheduler.step()
 
         train_loss += loss.item()
         train_loss_seg += loss_seg.item()
@@ -148,7 +154,7 @@ def val(epoch):
             val_loss_seg += loss_seg.item()
             val_loss_exist += loss_exist.item()
 
-            progressbar.set_description("batch loss: {:.3f}".format(loss.detach().cpu().data.numpy()))
+            progressbar.set_description("batch loss: {:.3f}".format(loss.item()))
             progressbar.update(1)
 
     progressbar.close()
