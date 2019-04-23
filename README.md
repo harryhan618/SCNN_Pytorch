@@ -10,7 +10,7 @@ This repository contains a re-implementation in Pytorch.
 
 * 2019 / 4 / 23: Trained model converted from [SCNN](https://github.com/XingangPan/SCNN) is provided.
 
-
+<br/>
 
 ## Data preparation
 
