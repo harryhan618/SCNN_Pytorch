@@ -25,18 +25,17 @@ device = torch.device(exp_cfg['device'])
 tensorboard = TensorBoard(exp_dir)
 
 # ------------ train data ------------
+# CULane mean, std
+mean=(0.3598, 0.3653, 0.3662)
+std=(0.2573, 0.2663, 0.2756)
 transform_train = Compose(Resize((800, 288)), Rotation(2), ToTensor(),
-                          Normalize(mean=(0.3598, 0.3653, 0.3662), std=(0.2573, 0.2663, 0.2756)))
-transform_train = Compose(Resize((800, 288)), Rotation(2), ToTensor(),
-                          Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]))
+                          Normalize(mean=mean, std=std))
 train_dataset = CULane(CULane_path, "train", transform_train)
 train_loader = DataLoader(train_dataset, **exp_cfg['dataset'], shuffle=True, collate_fn=train_dataset.collate, num_workers=8)
 
 # ------------ val data ------------
 transform_val = Compose(Resize((800, 288)), ToTensor(),
-                        Normalize(mean=(0.3598, 0.3653, 0.3662), std=(0.2573, 0.2663, 0.2756)))
-transform_val = Compose(Resize((800, 288)), ToTensor(),
-                        Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]))
+                        Normalize(mean=mean, std=std))
 val_dataset = CULane(CULane_path, "val", transform_val)
 val_loader = DataLoader(val_dataset, batch_size=8, collate_fn=train_dataset.collate, num_workers=4)
 

@@ -7,8 +7,10 @@ from utils.prob2lines import getLane
 from utils.transforms import *
 
 net = SCNN(pretrained=False)
+mean=(0.3598, 0.3653, 0.3662) # CULane mean, std
+std=(0.2573, 0.2663, 0.2756)
 transform = Compose(Resize((800, 288)), ToTensor(),
-                    Normalize(mean=(0.3598, 0.3653, 0.3662), std=(0.2573, 0.2663, 0.2756)))
+                    Normalize(mean=mean, std=std))
 
 
 def parse_args():

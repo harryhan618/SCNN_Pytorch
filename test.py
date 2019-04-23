@@ -33,10 +33,11 @@ def split_path(path):
 
 
 # ------------ data and model ------------
+# CULane mean, std
+mean=(0.3598, 0.3653, 0.3662)
+std=(0.2573, 0.2663, 0.2756)
 transform = Compose(Resize((800, 288)), ToTensor(),
-                    Normalize(mean=(0.3598, 0.3653, 0.3662), std=(0.2573, 0.2663, 0.2756)))
-transform = Compose(Resize((800, 288)), ToTensor(),
-                    Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]))
+                    Normalize(mean=mean, std=std))
 # val_dataset = CULane(CULane_path, "val", transform)
 # val_loader = DataLoader(val_dataset, batch_size=8, collate_fn=val_dataset.collate, num_workers=4)
 test_dataset = CULane(CULane_path, "test", transform)
