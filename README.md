@@ -6,6 +6,12 @@ This repository contains a re-implementation in Pytorch.
 
 
 
+### Updates
+
+* 2019 / 4 / 23: Trained model converted from [SCNN](https://github.com/XingangPan/SCNN) is provided.
+
+
+
 ## Data preparation
 
 ### CULane
@@ -41,6 +47,17 @@ Tusimple_path
 
 **Note:  seg\_label images and gt.txt, as in CULane dataset format,  will be generated the first time `Tusimple` object is instantiated. It may take time.**
 
+
+
+## Model Provided
+
+* Model trained on CULane Dataset can be converted from [SCNN](https://github.com/XingangPan/SCNN).  It can be downloaded [here](https://drive.google.com/open?id=1Wv3r3dCYNBwJdKl_WPEfrEOt-XGaROKu). Please put the `vgg_SCNN_DULR_w9.t7` file into `experiments/vgg_SCNN_DULR_w9`.
+
+  ```
+  python experiments/vgg_SCNN_DULR_w9/t7_to_pt.py
+  ```
+
+  Model will be cached into `experiments/vgg_SCNN_DULR_w9/vgg_SCNN_DULR_w9.pth`.
 
 
 
