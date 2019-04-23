@@ -8,7 +8,7 @@ This repository contains a re-implementation in Pytorch.
 
 ### Updates
 
-* 2019 / 4 / 23: Trained model converted from [SCNN](https://github.com/XingangPan/SCNN) is provided.
+* 2019 / 4 / 23: Trained model converted from [official t7 model](https://github.com/XingangPan/SCNN) is provided.
 
 <br/>
 
