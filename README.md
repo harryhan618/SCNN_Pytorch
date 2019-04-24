@@ -66,11 +66,11 @@ Tusimple_path
 
 For single image demo test:
 
+```shell
+python demo_test.py   -i demo/demo.jpg 
+                      -w experiments/vgg_SCNN_DULR_w9/vgg_SCNN_DULR_w9.pth 
+                      [--visualize / -v]
 ```
-python demo_test.py -i demo/demo.jpg -w experiments/exp0/exp0_best.pth [--visualize / -v]
-```
-
-**A trained model for CULane Dataset can be download [here](https://drive.google.com/file/d/1IlPJ7zxyiage5oKcHxojufoxxleq5JoH) .**
 
 ![](demo/demo_result.jpg "demo_result")
 
