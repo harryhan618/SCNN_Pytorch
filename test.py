@@ -13,7 +13,7 @@ from utils.transforms import *
 from utils.prob2lines import getLane
 
 # ------------ config ------------
-exp_dir = "./experiments/exp1"
+exp_dir = "experiments/vgg_SCNN_DULR_w9"
 
 device = torch.device('cuda')
 
@@ -46,6 +46,7 @@ test_loader = DataLoader(test_dataset, batch_size=8, collate_fn=test_dataset.col
 
 net = SCNN(pretrained=False)
 save_name = os.path.join(exp_dir, exp_dir.split('/')[-1] + '_best.pth')
+save_name = "/home/lion/hanyibo/SCNN/experiments/vgg_SCNN_DULR_w9/vgg_SCNN_DULR_w9.pth"
 save_dict = torch.load(save_name, map_location='cpu')
 print("loading", save_name, "......")
 net.load_state_dict(save_dict['net'])
@@ -55,8 +56,11 @@ net.eval()
 
 # ------------ test ------------
 out_path = os.path.join(exp_dir, "coord_output")
+evaluation_path = os.path.join(exp_dir, "evaluate")
 if not os.path.exists(out_path):
     os.mkdir(out_path)
+if not os.path.exists(evaluation_path):
+    os.mkdir(evaluation_path)
 
 progressbar = tqdm(range(len(test_loader)))
 with torch.no_grad():

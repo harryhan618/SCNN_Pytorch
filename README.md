@@ -8,7 +8,9 @@ This repository contains a re-implementation in Pytorch.
 
 ### Updates
 
-* 2019 / 4 / 23: Trained model converted from [official t7 model](https://github.com/XingangPan/SCNN) is provided.
+- 2019 / 5 / 08: Evaluation is provided.
+
+* 2019 / 4 / 23: Trained model converted from [official t7 model](https://github.com/XingangPan/SCNN#Testing) is provided.
 
 <br/>
 
@@ -49,9 +51,11 @@ Tusimple_path
 
 
 
-## Model Provided
+<br/>
 
-* Model trained on CULane Dataset can be converted from [SCNN](https://github.com/XingangPan/SCNN).  It can be downloaded [here](https://drive.google.com/open?id=1Wv3r3dCYNBwJdKl_WPEfrEOt-XGaROKu). Please put the `vgg_SCNN_DULR_w9.t7` file into `experiments/vgg_SCNN_DULR_w9`.
+## Trained Model Provided
+
+* Model trained on CULane Dataset can be converted from [SCNN](https://github.com/XingangPan/SCNN#Testing)， which can be downloaded [here](https://drive.google.com/open?id=1Wv3r3dCYNBwJdKl_WPEfrEOt-XGaROKu). Please put the `vgg_SCNN_DULR_w9.t7` file into `experiments/vgg_SCNN_DULR_w9`.
 
   ```
   python experiments/vgg_SCNN_DULR_w9/t7_to_pt.py
@@ -60,6 +64,8 @@ Tusimple_path
   Model will be cached into `experiments/vgg_SCNN_DULR_w9/vgg_SCNN_DULR_w9.pth`.
 
 
+
+<br/>
 
 
 ## Demo Test
@@ -103,6 +109,34 @@ python demo_test.py   -i demo/demo.jpg
 - Currently the backbone is vgg16 from torchvision. Several modifications are done to the torchvision model according to paper, i.e., i). dilation of last three conv layer is changed to 2, ii). last two maxpooling layer is removed.
 
 
+
+<br/>
+
+## Evaluation
+
+* Evaluation code is ported from [official implementation](<https://github.com/XingangPan/SCNN>) and a `CMakeLists.txt` is provided.
+
+  ```bash
+  cd utils/lane_evaluation
+  mkdir build && cd build
+  cmake ..
+  make
+  ```
+
+* Run test script
+
+  ```
+  python test.py
+  ```
+
+  Modify `utils/lane_evaluation/Run.sh` and run it
+
+  ```
+  cd utils/lane_evaluation
+  sh ./Run.sh
+  ```
+
+  
 
 
 
