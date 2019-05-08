@@ -1,6 +1,6 @@
 root=../../
 exp=vgg_SCNN_DULR_w9
-data_dir=${root}data/CULane/
+data_dir=/home/lion/Dataset/CULane/data/CULane/
 detect_dir=${root}experiments/${exp}/coord_output/
 
 w_lane=30;

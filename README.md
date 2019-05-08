@@ -129,14 +129,14 @@ python demo_test.py   -i demo/demo.jpg
   python test.py
   ```
 
-  Modify `utils/lane_evaluation/Run.sh` and run it
+  Modify  directory path `exp` in `utils/lane_evaluation/Run.sh` and run it.
 
   ```
   cd utils/lane_evaluation
   sh ./Run.sh
   ```
 
-  
+  The result will be stored in `exp` directory, e.g. `experiments/vgg_SCNN_DULR_w9/evaluate`.
 
 
 
