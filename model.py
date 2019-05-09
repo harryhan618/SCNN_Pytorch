@@ -21,7 +21,7 @@ class SCNN(nn.Module):
         self.scale_exist = 0.1
 
         self.ce_loss = nn.CrossEntropyLoss(weight=torch.tensor([self.scale_background, 1, 1, 1, 1]))
-        self.bce_loss = nn.BCEWithLogitsLoss(reduction='sum')
+        self.bce_loss = nn.BCELoss(reduction='sum')
 
     def forward(self, img, seg_gt=None, exist_gt=None):
         x = self.backbone(img)
