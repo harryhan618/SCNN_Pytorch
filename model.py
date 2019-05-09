@@ -73,6 +73,8 @@ class SCNN(nn.Module):
         out = [slices[0]]
         for i in range(1, len(slices)):
             out.append(slices[i] + F.relu(conv(out[i - 1])))
+        if reverse:
+            out = out[::-1]
         return torch.cat(out, dim=dim)
 
     def net_init(self, ms_ks):
@@ -134,21 +136,3 @@ class SCNN(nn.Module):
             elif isinstance(m, nn.BatchNorm2d):
                 m.weight.data[:] = 1.
                 m.bias.data.zero_()
-
-
-if __name__ == "__main__":
-    import torch
-
-    sc = SCNN()
-    for k in sc.state_dict().keys():
-        print(k)
-
-    print('---------------------------')
-    print(sc)
-    print(sc.state_dict()['backbone.0.bias'].shape)
-    x = torch.rand(2, 3, 288, 800)
-    y = sc(x, None, None)
-    for i in y:
-        print(i.shape)
-
-    from torch.utils.serialization import load_lua
