@@ -6,7 +6,7 @@ sys.path.append(os.path.join(abs_file_path, "..", "..")) # add path
 import torch
 import torch.nn as nn
 import collections
-# from torch.utils.serialization import load_lua
+from torch.utils.serialization import load_lua
 from model import SCNN
 
 model1 = load_lua('experiments/vgg_SCNN_DULR_w9/vgg_SCNN_DULR_w9.t7', unknown_classes=True)
