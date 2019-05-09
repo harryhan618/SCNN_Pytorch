@@ -55,13 +55,15 @@ Tusimple_path
 
 ## Trained Model Provided
 
-* Model trained on CULane Dataset can be converted from [SCNN](https://github.com/XingangPan/SCNN#Testing)， which can be downloaded [here](https://drive.google.com/open?id=1Wv3r3dCYNBwJdKl_WPEfrEOt-XGaROKu). Please put the `vgg_SCNN_DULR_w9.t7` file into `experiments/vgg_SCNN_DULR_w9`.
+* Model trained on CULane Dataset can be converted from [official implementation](https://github.com/XingangPan/SCNN#Testing)， which can be downloaded [here](https://drive.google.com/open?id=1Wv3r3dCYNBwJdKl_WPEfrEOt-XGaROKu). Please put the `vgg_SCNN_DULR_w9.t7` file into `experiments/vgg_SCNN_DULR_w9`.
 
   ```
   python experiments/vgg_SCNN_DULR_w9/t7_to_pt.py
   ```
 
-  Model will be cached into `experiments/vgg_SCNN_DULR_w9/vgg_SCNN_DULR_w9.pth`.
+  Model will be cached into `experiments/vgg_SCNN_DULR_w9/vgg_SCNN_DULR_w9.pth`. 
+
+  Because `torch.utils.serialization` is obsolete in Pytorch 1.0+, the converted model is provided [here](https://drive.google.com/open?id=1bBdN3yhoOQBC9pRtBUxzeRrKJdF7uVTJ).
 
 
 
@@ -82,7 +84,7 @@ python demo_test.py   -i demo/demo.jpg
 
 
 
-
+<br/>
 
 ## Train 
 
