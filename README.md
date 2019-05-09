@@ -63,7 +63,7 @@ Tusimple_path
 
   Model will be cached into `experiments/vgg_SCNN_DULR_w9/vgg_SCNN_DULR_w9.pth`. 
 
-  Because `torch.utils.serialization` is obsolete in Pytorch 1.0+, **the converted model** is provided [**here**](https://drive.google.com/open?id=1bBdN3yhoOQBC9pRtBUxzeRrKJdF7uVTJ).
+  **Note**:`torch.utils.serialization` is obsolete in Pytorch 1.0+. You can directly download **the converted model [here](https://drive.google.com/open?id=1bBdN3yhoOQBC9pRtBUxzeRrKJdF7uVTJ)**.
 
 
 
