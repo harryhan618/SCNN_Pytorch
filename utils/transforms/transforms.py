@@ -60,7 +60,7 @@ class Resize(CustomTransform):
     def __init__(self, size):
         if isinstance(size, int):
             size = (size, size)
-        self.size = size  #(W, H)
+        self.size = tuple(size)  #(W, H)
 
     def __call__(self, img, segLabel=None, exist=None):
         img = cv2.resize(img, self.size, interpolation=cv2.INTER_CUBIC)

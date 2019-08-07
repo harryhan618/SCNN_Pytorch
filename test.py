@@ -42,7 +42,7 @@ mean=(0.3598, 0.3653, 0.3662)
 std=(0.2573, 0.2663, 0.2756)
 dataset_name = exp_cfg['dataset'].pop('dataset_name')
 Dataset_Type = getattr(dataset, dataset_name)
-transform = Compose(Resize((800, 288)), ToTensor(),
+transform = Compose(Resize(resize_shape), ToTensor(),
                     Normalize(mean=mean, std=std))
 test_dataset = Dataset_Type(Dataset_Path[dataset_name], "test", transform)
 test_loader = DataLoader(test_dataset, batch_size=8, collate_fn=test_dataset.collate, num_workers=4)
