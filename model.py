@@ -5,14 +5,14 @@ import torchvision.models as models
 
 
 class SCNN(nn.Module):
-    def __init__(self, ms_ks=9, pretrained=True):
+    def __init__(self, input_size, ms_ks=9, pretrained=True):
         """
         Argument
             ms_ks: kernel size in message passing conv
         """
         super(SCNN, self).__init__()
         self.pretrained = pretrained
-        self.net_init(ms_ks)
+        self.net_init(input_size, ms_ks)
         if not pretrained:
             self.weight_init()
 
@@ -31,7 +31,7 @@ class SCNN(nn.Module):
 
         seg_pred = F.interpolate(x, scale_factor=8, mode='bilinear', align_corners=True)
         x = self.layer3(x)
-        x = x.view(-1, 4500)
+        x = x.view(-1, self.fc_input_feature)
         exist_pred = self.fc(x)
 
         if seg_gt is not None and exist_gt is not None:
@@ -77,7 +77,9 @@ class SCNN(nn.Module):
             out = out[::-1]
         return torch.cat(out, dim=dim)
 
-    def net_init(self, ms_ks):
+    def net_init(self, input_size, ms_ks):
+        input_w, input_h = input_size
+        self.fc_input_feature = 5 * input_w/16 * input_h/16
         self.backbone = models.vgg16_bn(pretrained=self.pretrained).features
 
         # ----------------- process backbone -----------------
@@ -123,7 +125,7 @@ class SCNN(nn.Module):
             nn.AvgPool2d(2, 2),  # (nB, 5, 18, 50)
         )
         self.fc = nn.Sequential(
-            nn.Linear(4500, 128),
+            nn.Linear(self.fc_input_feature, 128),
             nn.ReLU(),
             nn.Linear(128, 4),
             nn.Sigmoid()
