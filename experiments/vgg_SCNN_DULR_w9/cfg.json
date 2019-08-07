@@ -1,0 +1,10 @@
+{
+  "device": "cuda:0",
+
+  "dataset": {
+    "dataset_name": "CULane",
+    "resize_shape": [512, 288]
+  }
+
+
+}
