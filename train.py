@@ -15,8 +15,18 @@ from utils.tensorboard import TensorBoard
 from utils.transforms import *
 from utils.lr_scheduler import PolyLR
 
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--exp_dir", type=str, default="./experiments/exp0")
+    parser.add_argument("--resume", "-r", action="store_true")
+    args = parser.parse_args()
+    return args
+args = parse_args()
+
 # ------------ config ------------
-exp_dir = "./experiments/exp0"
+exp_dir = args.exp_dir
+exp_name = exp_dir.split['/'][-1]
 
 with open(os.path.join(exp_dir, "cfg.json")) as f:
     exp_cfg = json.load(f)
@@ -31,13 +41,13 @@ mean=(0.3598, 0.3653, 0.3662)
 std=(0.2573, 0.2663, 0.2756)
 dataset_name = exp_cfg['dataset'].pop('dataset_name')
 Dataset_Type = getattr(dataset, dataset_name)
-transform_train = Compose(Resize((800, 288)), Rotation(2), ToTensor(),
+transform_train = Compose(Resize(resize_shape), Rotation(2), ToTensor(),
                           Normalize(mean=mean, std=std))
 train_dataset = Dataset_Type(Dataset_Path[dataset_name], "train", transform_train)
 train_loader = DataLoader(train_dataset, **exp_cfg['dataset'], shuffle=True, collate_fn=train_dataset.collate, num_workers=8)
 
 # ------------ val data ------------
-transform_val = Compose(Resize((800, 288)), ToTensor(),
+transform_val = Compose(Resize(resize_shape), ToTensor(),
                         Normalize(mean=mean, std=std))
 val_dataset = Dataset_Type(Dataset_Path[dataset_name], "val", transform_val)
 val_loader = DataLoader(val_dataset, batch_size=8, collate_fn=train_dataset.collate, num_workers=4)
@@ -95,7 +105,7 @@ def train(epoch):
             "optim": optimizer.state_dict(),
             "lr_scheduler": lr_scheduler.state_dict()
         }
-        save_name = os.path.join(exp_dir, exp_dir.split('/')[-1] + '.pth')
+        save_name = os.path.join(exp_dir, exp_name + '.pth')
         torch.save(save_dict, save_name)
         print("model is saved: {}".format(save_name))
 
@@ -168,22 +178,14 @@ def val(epoch):
     print("------------------------\n")
     if val_loss < best_val_loss:
         best_val_loss = val_loss
-        save_name = os.path.join(exp_dir, exp_dir.split('/')[-1] + '.pth')
-        copy_name = os.path.join(exp_dir, exp_dir.split('/')[-1] + '_best.pth')
+        save_name = os.path.join(exp_dir, exp_name + '.pth')
+        copy_name = os.path.join(exp_dir, exp_name + '_best.pth')
         shutil.copyfile(save_name, copy_name)
 
 
-def parse_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--resume", "-r", action="store_true")
-    args = parser.parse_args()
-    return args
-
-
 def main():
-    args = parse_args()
     if args.resume:
-        save_dict = torch.load(os.path.join(exp_dir, exp_dir.split('/')[-1] + '.pth'))
+        save_dict = torch.load(os.path.join(exp_dir, exp_name + '.pth'))
         if isinstance(net, torch.nn.DataParallel):
             net.module.load_state_dict(save_dict['net'])
         else:
