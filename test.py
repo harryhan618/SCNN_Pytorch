@@ -1,11 +1,12 @@
-import argparse
+import json
 import os
+import argparse
 
 import torch
 from torch.utils.data import DataLoader
 
 from config import *
-from dataset.CULane import CULane
+import dataset
 from model import SCNN
 
 from tqdm import tqdm
@@ -14,6 +15,9 @@ from utils.prob2lines import getLane
 
 # ------------ config ------------
 exp_dir = "experiments/vgg_SCNN_DULR_w9"
+with open(os.path.join(exp_dir, "cfg.json")) as f:
+    exp_cfg = json.load(f)
+resize_shape = tuple(exp_cfg['dataset']['resize_shape'])
 
 device = torch.device('cuda')
 
@@ -36,15 +40,15 @@ def split_path(path):
 # CULane mean, std
 mean=(0.3598, 0.3653, 0.3662)
 std=(0.2573, 0.2663, 0.2756)
+dataset_name = exp_cfg['dataset'].pop('dataset_name')
+Dataset_Type = getattr(dataset, dataset_name)
 transform = Compose(Resize((800, 288)), ToTensor(),
                     Normalize(mean=mean, std=std))
-# val_dataset = CULane(CULane_path, "val", transform)
-# val_loader = DataLoader(val_dataset, batch_size=8, collate_fn=val_dataset.collate, num_workers=4)
-test_dataset = CULane(CULane_path, "test", transform)
+test_dataset = Dataset_Type(Dataset_Path[dataset_name], "test", transform)
 test_loader = DataLoader(test_dataset, batch_size=8, collate_fn=test_dataset.collate, num_workers=4)
 
 
-net = SCNN(pretrained=False)
+net = SCNN(resize_shape, pretrained=False)
 save_name = os.path.join(exp_dir, exp_dir.split('/')[-1] + '_best.pth')
 save_name = "/home/lion/hanyibo/SCNN/experiments/vgg_SCNN_DULR_w9/vgg_SCNN_DULR_w9.pth"
 save_dict = torch.load(save_name, map_location='cpu')
@@ -93,10 +97,3 @@ with torch.no_grad():
 
         progressbar.update(1)
 progressbar.close()
-
-
-def parse_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--dataset", "-d", type=str)
-    args = parser.parse_args()
-    return args

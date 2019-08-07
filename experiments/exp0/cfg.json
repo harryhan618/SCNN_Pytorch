@@ -3,7 +3,9 @@
   "MAX_ITER": 7000,
 
   "dataset": {
-    "batch_size": 16
+    "dataset_name": "Tusimple",
+    "batch_size": 16,
+    "resize_shape": [512, 288]
   },
 
   "optim": {
