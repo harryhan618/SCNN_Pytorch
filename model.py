@@ -79,7 +79,7 @@ class SCNN(nn.Module):
 
     def net_init(self, input_size, ms_ks):
         input_w, input_h = input_size
-        self.fc_input_feature = int(5 * input_w/16 * input_h/16)
+        self.fc_input_feature = 5 * int(input_w/16) * int(input_h/16)
         self.backbone = models.vgg16_bn(pretrained=self.pretrained).features
 
         # ----------------- process backbone -----------------
