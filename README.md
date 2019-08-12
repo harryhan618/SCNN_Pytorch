@@ -8,9 +8,10 @@ This repository contains a re-implementation in Pytorch.
 
 ### Updates
 
-- 2019 / 5 / 08: Evaluation is provided.
+- 2019 / 08 / 12: Code refined including more convenient test script and trained model.
+- 2019 / 05 / 08: Evaluation is provided.
 
-* 2019 / 4 / 23: Trained model converted from [official t7 model](https://github.com/XingangPan/SCNN#Testing) is provided.
+* 2019 / 04 / 23: Trained model converted from [official t7 model](https://github.com/XingangPan/SCNN#Testing) is provided.
 
 <br/>
 
@@ -18,7 +19,7 @@ This repository contains a re-implementation in Pytorch.
 
 ### CULane
 
-The dataset is available in [CULane](https://xingangpan.github.io/projects/CULane.html). Please download and unzip the files in one folder, which later is represented as `CULane_path`.  Then modify the path of `CULane_path` in `config.py`.
+The dataset is available in [CULane](https://xingangpan.github.io/projects/CULane.html). Please download and unzip the files in one folder, which later is represented as `CULane_path`.  Then modify the path of `CULane_path` in `config.py`. Also, modify the path of `CULane_path` as `data_dir`  in `utils/lane_evaluation/CULane/Run.sh` .
 ```
 CULane_path
 ├── driver_100_30frame
@@ -32,7 +33,9 @@ CULane_path
 └── list
 ```
 
-**Note: absolute path is encouraged.**
+**Note: absolute path is encouraged. **
+
+
 
 
 
@@ -64,6 +67,34 @@ Tusimple_path
   Model will be cached into `experiments/vgg_SCNN_DULR_w9/vgg_SCNN_DULR_w9.pth`. 
 
   **Note**:`torch.utils.serialization` is obsolete in Pytorch 1.0+. You can directly download **the converted model [here](https://drive.google.com/open?id=1bBdN3yhoOQBC9pRtBUxzeRrKJdF7uVTJ)**.
+
+
+
+* My trained model on Tusimple can be downloaded [here](https://drive.google.com/open?id=1IwEenTekMt-t6Yr5WJU9_kv4d_Pegd_Q). Its configure file is in `exp0`.
+
+| Accuracy | FP   | FN   |
+| -------- | ---- | ---- |
+| 90.93%   |0.1313|0.1395|
+
+
+
+
+
+* My trained model on CULane can be downloaded [here](https://drive.google.com/open?id=1AZn23w8RbMh1P6lJcVcf6PcTIWJvQg9u). Its configure file is in `exp10`.
+
+| Category  | F1-measure          |
+| --------- | ------------------- |
+| Normal    | 82.65               |
+| Crowded   | 58.86               |
+| HLight    | 5093                |
+| Shadow    | 61.78               |
+| No line   | 34.13               |
+| Arrow     | 73.44               |
+| Curve     | 65.16               |
+| Crossroad | 2424 （FP measure） |
+| Night     | 57.76               |
+
+
 
 
 
@@ -116,19 +147,27 @@ python demo_test.py   -i demo/demo.jpg
 
 ## Evaluation
 
-* Evaluation code is ported from [official implementation](<https://github.com/XingangPan/SCNN>) and a `CMakeLists.txt` is provided.
+* CULane Evaluation code is ported from [official implementation](<https://github.com/XingangPan/SCNN>) and an extra `CMakeLists.txt` is provided. Please build the CPP code first.
 
   ```bash
-  cd utils/lane_evaluation
+  cd utils/lane_evaluation/CULane
   mkdir build && cd build
   cmake ..
   make
   ```
 
-* Run test script
+  Just run the evaluation script. Result will be saved into corresponding `exp_dir` directory, 
 
+  ``` shell
+  python test_CULane.py --exp_dir ./experiments/exp10
   ```
-  python test.py
+
+  
+
+* Tusimple Evaluation code is ported from [tusimple repo](https://github.com/TuSimple/tusimple-benchmark/blob/master/evaluate/lane.py).
+
+  ```Shell
+  python test_tusimple.py --exp_dir ./experiments/exp0
   ```
 
   Modify  directory path `exp` in `utils/lane_evaluation/Run.sh` and run it.
@@ -138,7 +177,6 @@ python demo_test.py   -i demo/demo.jpg
   sh ./Run.sh
   ```
 
-  The result will be stored in `exp` directory, e.g. `experiments/vgg_SCNN_DULR_w9/evaluate`.
 
 
 
