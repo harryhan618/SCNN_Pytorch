@@ -10,8 +10,7 @@ This repository contains a re-implementation in Pytorch.
 
 - 2019 / 08 / 12: Code refined including more convenient test script and trained model.
 - 2019 / 05 / 08: Evaluation is provided.
-
-* 2019 / 04 / 23: Trained model converted from [official t7 model](https://github.com/XingangPan/SCNN#Testing) is provided.
+- 2019 / 04 / 23: Trained model converted from [official t7 model](https://github.com/XingangPan/SCNN#Testing) is provided.
 
 <br/>
 
