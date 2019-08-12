@@ -1,5 +1,4 @@
 {
-  "CLUSTER_LABEL": "BJ15",
   "device": "cuda:0",
   "MAX_ITER": 30,
 
