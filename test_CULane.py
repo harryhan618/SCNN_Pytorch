@@ -1,24 +1,32 @@
+import argparse
 import json
 import os
-import argparse
 
-import torch
 from torch.utils.data import DataLoader
-
-from config import *
-import dataset
-from model import SCNN
-
 from tqdm import tqdm
-from utils.transforms import *
+
+import dataset
+from config import *
+from model import SCNN
 from utils.prob2lines import getLane
+from utils.transforms import *
+
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--exp_dir", type=str, default="./experiments/exp10")
+    args = parser.parse_args()
+    return args
+
 
 # ------------ config ------------
-exp_dir = "experiments/vgg_SCNN_DULR_w9"
+args = parse_args()
+exp_dir = args.exp_dir
+exp_name = exp_dir.split('/')[-1]
+
 with open(os.path.join(exp_dir, "cfg.json")) as f:
     exp_cfg = json.load(f)
 resize_shape = tuple(exp_cfg['dataset']['resize_shape'])
-
 device = torch.device('cuda')
 
 
@@ -37,26 +45,26 @@ def split_path(path):
 
 
 # ------------ data and model ------------
-# CULane mean, std
-mean=(0.3598, 0.3653, 0.3662)
-std=(0.2573, 0.2663, 0.2756)
+# # CULane mean, std
+# mean=(0.3598, 0.3653, 0.3662)
+# std=(0.2573, 0.2663, 0.2756)
+# Imagenet mean, std
+mean = (0.485, 0.456, 0.406)
+std = (0.229, 0.224, 0.225)
 dataset_name = exp_cfg['dataset'].pop('dataset_name')
 Dataset_Type = getattr(dataset, dataset_name)
 transform = Compose(Resize(resize_shape), ToTensor(),
                     Normalize(mean=mean, std=std))
 test_dataset = Dataset_Type(Dataset_Path[dataset_name], "test", transform)
-test_loader = DataLoader(test_dataset, batch_size=8, collate_fn=test_dataset.collate, num_workers=4)
-
+test_loader = DataLoader(test_dataset, batch_size=64, collate_fn=test_dataset.collate, num_workers=4)
 
 net = SCNN(resize_shape, pretrained=False)
 save_name = os.path.join(exp_dir, exp_dir.split('/')[-1] + '_best.pth')
-save_name = "/home/lion/hanyibo/SCNN/experiments/vgg_SCNN_DULR_w9/vgg_SCNN_DULR_w9.pth"
 save_dict = torch.load(save_name, map_location='cpu')
-print("loading", save_name, "......")
+print("\nloading", save_name, "...... From Epoch: ", save_dict['epoch'])
 net.load_state_dict(save_dict['net'])
-net.to(device)
+net = torch.nn.DataParallel(net.to(device))
 net.eval()
-
 
 # ------------ test ------------
 out_path = os.path.join(exp_dir, "coord_output")
@@ -79,7 +87,7 @@ with torch.no_grad():
         for b in range(len(seg_pred)):
             seg = seg_pred[b]
             exist = [1 if exist_pred[b, i] > 0.5 else 0 for i in range(4)]
-            lane_coords = getLane.prob2lines(seg, exist, resize_shape=(590, 1640), y_px_gap=20, pts=18)
+            lane_coords = getLane.prob2lines_CULane(seg, exist, resize_shape=(590, 1640), y_px_gap=20, pts=18)
 
             path_tree = split_path(img_name[b])
             save_dir, save_name = path_tree[-3:-1], path_tree[-1]
@@ -97,3 +105,6 @@ with torch.no_grad():
 
         progressbar.update(1)
 progressbar.close()
+
+# ---- evaluate ----
+os.system("sh utils/lane_evaluation/CULane/Run.sh " + exp_name)
