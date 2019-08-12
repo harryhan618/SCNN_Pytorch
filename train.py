@@ -199,7 +199,6 @@ def main():
         optimizer.load_state_dict(save_dict['optim'])
         lr_scheduler.load_state_dict(save_dict['lr_scheduler'])
         start_epoch = save_dict['epoch'] + 1
-        best_val_loss = save_dict['best_val_loss']
     else:
         start_epoch = 0
 

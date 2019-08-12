@@ -32,7 +32,7 @@ CULane_path
 └── list
 ```
 
-** Note: absolute path is encouraged.  **
+ **Note: absolute path is encouraged.**
 
 
 
