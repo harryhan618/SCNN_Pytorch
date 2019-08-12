@@ -36,15 +36,18 @@ device = torch.device(exp_cfg['device'])
 tensorboard = TensorBoard(exp_dir)
 
 # ------------ train data ------------
-# CULane mean, std
-mean=(0.3598, 0.3653, 0.3662)
-std=(0.2573, 0.2663, 0.2756)
+# # CULane mean, std
+# mean=(0.3598, 0.3653, 0.3662)
+# std=(0.2573, 0.2663, 0.2756)
+# Imagenet mean, std
+mean=(0.485, 0.456, 0.406)
+std=(0.229, 0.224, 0.225)
 dataset_name = exp_cfg['dataset'].pop('dataset_name')
 Dataset_Type = getattr(dataset, dataset_name)
 transform_train = Compose(Resize(resize_shape), Rotation(2), ToTensor(),
                           Normalize(mean=mean, std=std))
 train_dataset = Dataset_Type(Dataset_Path[dataset_name], "train", transform_train)
-train_loader = DataLoader(train_dataset, **exp_cfg['dataset'], shuffle=True, collate_fn=train_dataset.collate, num_workers=8)
+train_loader = DataLoader(train_dataset, batch_size=exp_cfg['dataset']['batch_size'], shuffle=True, collate_fn=train_dataset.collate, num_workers=8)
 
 # ------------ val data ------------
 transform_val = Compose(Resize(resize_shape), ToTensor(),
@@ -103,7 +106,8 @@ def train(epoch):
             "epoch": epoch,
             "net": net.module.state_dict() if isinstance(net, torch.nn.DataParallel) else net.state_dict(),
             "optim": optimizer.state_dict(),
-            "lr_scheduler": lr_scheduler.state_dict()
+            "lr_scheduler": lr_scheduler.state_dict(),
+            "best_val_loss": best_val_loss
         }
         save_name = os.path.join(exp_dir, exp_name + '.pth')
         torch.save(save_dict, save_name)
@@ -184,6 +188,7 @@ def val(epoch):
 
 
 def main():
+    global best_val_loss
     if args.resume:
         save_dict = torch.load(os.path.join(exp_dir, exp_name + '.pth'))
         if isinstance(net, torch.nn.DataParallel):
@@ -193,6 +198,7 @@ def main():
         optimizer.load_state_dict(save_dict['optim'])
         lr_scheduler.load_state_dict(save_dict['lr_scheduler'])
         start_epoch = save_dict['epoch'] + 1
+        best_val_loss = save_dict['best_val_loss']
     else:
         start_epoch = 0
 

@@ -1,19 +1,28 @@
 {
+  "CLUSTER_LABEL": "BJ15",
   "device": "cuda:0",
-  "MAX_ITER": 7000,
+  "MAX_ITER": 60,
 
   "dataset": {
     "dataset_name": "Tusimple",
-    "batch_size": 16,
+    "batch_size": 32,
     "resize_shape": [512, 288]
   },
 
   "optim": {
-    "lr": 1e-2,
+    "lr": 15e-2,
     "momentum": 0.9,
-    "weight_decay": 1e-3,
+    "weight_decay": 1e-4,
     "nesterov": true
+  },
+
+  "lr_scheduler": {
+    "warmup": 20,
+    "max_iter": 1500,
+    "min_lrs": 1e-10
+  },
+
+  "model": {
+    "scale_exist": 0.07
   }
-
-
 }
