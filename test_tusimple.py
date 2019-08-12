@@ -134,5 +134,5 @@ from utils.lane_evaluation.tusimple.lane import LaneEval
 eval_result = LaneEval.bench_one_submit(os.path.join(out_path, "predict_test.json"),
                                         "/mnt/lustre/hanyibo/Dataset/tusimple/test_label.json")
 print(eval_result)
-with open(os.path.join(evaluation_path, "evaluation_result.test"), "w") as f:
+with open(os.path.join(evaluation_path, "evaluation_result.txt"), "w") as f:
     print(eval_result, file=f)
