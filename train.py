@@ -86,20 +86,20 @@ def train(epoch):
             loss = loss.sum()
         loss.backward()
         optimizer.step()
-        if batch_idx % 5 == 4:
-            lr_scheduler.step()
+        lr_scheduler.step()
 
-        train_loss += loss.item()
-        train_loss_seg += loss_seg.item()
-        train_loss_exist += loss_exist.item()
+        iter_idx = epoch * len(train_loader) + batch_idx
+        train_loss = loss.item()
+        train_loss_seg = loss_seg.item()
+        train_loss_exist = loss_exist.item()
         progressbar.set_description("batch loss: {:.3f}".format(loss.item()))
         progressbar.update(1)
 
-    progressbar.close()
-    tensorboard.scalar_summary("train_loss", train_loss, epoch)
-    tensorboard.scalar_summary("train_loss_seg", train_loss_seg, epoch)
-    tensorboard.scalar_summary("train_loss_exist", train_loss_exist, epoch)
-    tensorboard.writer.flush()
+        lr = optimizer.param_groups[0]['lr']
+        tensorboard.scalar_summary(exp_name + "/train_loss", train_loss, iter_idx)
+        tensorboard.scalar_summary(exp_name + "/train_loss_seg", train_loss_seg, iter_idx)
+        tensorboard.scalar_summary(exp_name + "/train_loss_exist", train_loss_exist, iter_idx)
+        tensorboard.scalar_summary(exp_name + "/learning_rate", lr, iter_idx)
 
     if epoch % 1 == 0:
         save_dict = {
@@ -174,9 +174,10 @@ def val(epoch):
             progressbar.update(1)
 
     progressbar.close()
-    tensorboard.scalar_summary("val_loss", val_loss, epoch)
-    tensorboard.scalar_summary("val_loss_seg", val_loss_seg, epoch)
-    tensorboard.scalar_summary("val_loss_exist", val_loss_exist, epoch)
+    iter_idx = (epoch + 1) * len(train_loader)  # keep align with training process iter_idx
+    tensorboard.scalar_summary("val_loss", val_loss, iter_idx)
+    tensorboard.scalar_summary("val_loss_seg", val_loss_seg, iter_idx)
+    tensorboard.scalar_summary("val_loss_exist", val_loss_exist, iter_idx)
     tensorboard.writer.flush()
 
     print("------------------------\n")
@@ -202,9 +203,9 @@ def main():
     else:
         start_epoch = 0
 
-    for epoch in range(start_epoch, 100):
+    for epoch in range(start_epoch, exp_cfg['MAX_ITER']):
         train(epoch)
-        if epoch % 2 == 0:
+        if epoch % 1 == 0:
             print("\nValidation For Experiment: ", exp_dir)
             print(time.strftime('%H:%M:%S', time.localtime()))
             val(epoch)
