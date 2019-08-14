@@ -38,10 +38,10 @@ class Compose(CustomTransform):
     def __init__(self, *transforms):
         self.transforms = [*transforms]
 
-    def __call__(self, img, segLabel=None, exist=None):
+    def __call__(self, sample):
         for t in self.transforms:
-            img, segLabel, exist = t(img=img, segLabel=segLabel, exist=exist)
-        return img, segLabel, exist
+            sample = t(sample)
+        return sample
 
     def __iter__(self):
         return iter(self.transforms)
@@ -60,13 +60,20 @@ class Resize(CustomTransform):
     def __init__(self, size):
         if isinstance(size, int):
             size = (size, size)
-        self.size = tuple(size)  #(W, H)
+        self.size = size  #(W, H)
 
-    def __call__(self, img, segLabel=None, exist=None):
+    def __call__(self, sample):
+        img = sample.get('img')
+        segLabel = sample.get('segLabel', None)
+
         img = cv2.resize(img, self.size, interpolation=cv2.INTER_CUBIC)
         if segLabel is not None:
             segLabel = cv2.resize(segLabel, self.size, interpolation=cv2.INTER_NEAREST)
-        return img, segLabel, exist
+
+        _sample = sample.copy()
+        _sample['img'] = img
+        _sample['segLabel'] = segLabel
+        return _sample
 
     def reset_size(self, size):
         if isinstance(size, int):
@@ -98,7 +105,7 @@ class Rotation(CustomTransform):
     def __init__(self, theta):
         self.theta = theta
 
-    def __call__(self, img, segLabel=None, exist=None):
+    def __call__(self, img, segLabel=None):
         u = np.random.uniform()
         degree = (u-0.5) * self.theta
         R = cv2.getRotationMatrix2D((img.shape[1]//2, img.shape[0]//2), degree, 1)
@@ -106,7 +113,7 @@ class Rotation(CustomTransform):
         if segLabel is not None:
             segLabel = cv2.warpAffine(segLabel, R, (segLabel.shape[1], segLabel.shape[0]), flags=cv2.INTER_NEAREST)
 
-        return img, segLabel, exist
+        return img, segLabel
 
     def reset_theta(self, theta):
         self.theta = theta
@@ -116,22 +123,32 @@ class Normalize(CustomTransform):
     def __init__(self, mean, std):
         self.transform = Normalize_th(mean, std)
 
-    def __call__(self, img, segLabel=None, exist=None):
+    def __call__(self, sample):
+        img = sample.get('img')
+
         img = self.transform(img)
-        return img, segLabel, exist
+
+        _sample = sample.copy()
+        _sample['img'] = img
+        return _sample
 
 
 class ToTensor(CustomTransform):
     def __init__(self, dtype=torch.float):
         self.dtype=dtype
 
-    def __call__(self, img, segLabel=None, exist=None):
+    def __call__(self, sample):
+        img = sample.get('img')
+        segLabel = sample.get('segLabel', None)
+
         img = img.transpose(2, 0, 1)
         img = torch.from_numpy(img).type(self.dtype) / 255.
         if segLabel is not None:
             segLabel = torch.from_numpy(segLabel).type(torch.long)
-        if exist is not None:
-            exist = torch.FloatTensor(exist)
-        return img, segLabel, exist
+
+        _sample = sample.copy()
+        _sample['img'] = img
+        _sample['segLabel'] = segLabel
+        return _sample
 
 

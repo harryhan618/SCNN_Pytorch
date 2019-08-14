@@ -42,10 +42,10 @@ tensorboard = TensorBoard(exp_dir)
 # Imagenet mean, std
 mean=(0.485, 0.456, 0.406)
 std=(0.229, 0.224, 0.225)
-dataset_name = exp_cfg['dataset'].pop('dataset_name')
-Dataset_Type = getattr(dataset, dataset_name)
 transform_train = Compose(Resize(resize_shape), Rotation(2), ToTensor(),
                           Normalize(mean=mean, std=std))
+dataset_name = exp_cfg['dataset'].pop('dataset_name')
+Dataset_Type = getattr(dataset, dataset_name)
 train_dataset = Dataset_Type(Dataset_Path[dataset_name], "train", transform_train)
 train_loader = DataLoader(train_dataset, batch_size=exp_cfg['dataset']['batch_size'], shuffle=True, collate_fn=train_dataset.collate, num_workers=8)
 
@@ -53,7 +53,7 @@ train_loader = DataLoader(train_dataset, batch_size=exp_cfg['dataset']['batch_si
 transform_val = Compose(Resize(resize_shape), ToTensor(),
                         Normalize(mean=mean, std=std))
 val_dataset = Dataset_Type(Dataset_Path[dataset_name], "val", transform_val)
-val_loader = DataLoader(val_dataset, batch_size=8, collate_fn=train_dataset.collate, num_workers=4)
+val_loader = DataLoader(val_dataset, batch_size=8, collate_fn=val_dataset.collate, num_workers=4)
 
 # ------------ preparation ------------
 net = SCNN(resize_shape, pretrained=True)
@@ -100,6 +100,9 @@ def train(epoch):
         tensorboard.scalar_summary(exp_name + "/train_loss_seg", train_loss_seg, iter_idx)
         tensorboard.scalar_summary(exp_name + "/train_loss_exist", train_loss_exist, iter_idx)
         tensorboard.scalar_summary(exp_name + "/learning_rate", lr, iter_idx)
+
+    progressbar.close()
+    tensorboard.writer.flush()
 
     if epoch % 1 == 0:
         save_dict = {

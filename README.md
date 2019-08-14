@@ -8,7 +8,8 @@ This repository contains a re-implementation in Pytorch.
 
 ### Updates
 
-- 2019 / 08 / 12: Code refined including more convenient test & evaluation script and trained model.
+- 2019 / 08 / 14: Code refined including more convenient test & evaluation script.
+- 2019 / 08 / 12: Trained model on both dataset provided.
 - 2019 / 05 / 08: Evaluation is provided.
 - 2019 / 04 / 23: Trained model converted from [official t7 model](https://github.com/XingangPan/SCNN#Testing) is provided.
 

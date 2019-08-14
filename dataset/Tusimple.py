@@ -57,13 +57,12 @@ class Tusimple(Dataset):
             segLabel = None
             exist = None
 
-        if self.transforms is not None:
-            img, segLabel, exist = self.transforms(img, segLabel, exist)
-
         sample = {'img': img,
                   'segLabel': segLabel,
                   'exist': exist,
                   'img_name': self.img_list[idx]}
+        if self.transforms is not None:
+            sample = self.transforms(sample)
         return sample
 
     def __len__(self):

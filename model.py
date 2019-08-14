@@ -5,7 +5,12 @@ import torchvision.models as models
 
 
 class SCNN(nn.Module):
-    def __init__(self, input_size, ms_ks=9, pretrained=True):
+    def __init__(
+            self,
+            input_size,
+            ms_ks=9,
+            pretrained=True
+    ):
         """
         Argument
             ms_ks: kernel size in message passing conv
