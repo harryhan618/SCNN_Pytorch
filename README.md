@@ -59,7 +59,7 @@ Tusimple_path
 
 * Model trained on CULane Dataset can be converted from [official implementation](https://github.com/XingangPan/SCNN#Testing)， which can be downloaded [here](https://drive.google.com/open?id=1Wv3r3dCYNBwJdKl_WPEfrEOt-XGaROKu). Please put the `vgg_SCNN_DULR_w9.t7` file into `experiments/vgg_SCNN_DULR_w9`.
 
-  ```
+  ```bash
   python experiments/vgg_SCNN_DULR_w9/t7_to_pt.py
   ```
 
@@ -124,13 +124,13 @@ python demo_test.py   -i demo/demo.jpg
 
 3. Start training:
 
-   ```python
-   python train.py [-r]
+   ```shell
+   python train.py --exp_dir ./experiments/exp0 [--resume/-r]
    ```
 
 4. Monitor on tensorboard:
 
-   ```
+   ```bash
    tensorboard --logdir='experiments/exp0' > experiments/exp0/board.log 2>&1 &
    ```
 
