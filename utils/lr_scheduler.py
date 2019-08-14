@@ -2,7 +2,7 @@ from torch.optim.lr_scheduler import _LRScheduler
 
 
 class PolyLR(_LRScheduler):
-    def __init__(self, optimizer, pow, max_iter, min_lrs=1e-5, last_epoch=-1, warmup=0):
+    def __init__(self, optimizer, pow, max_iter, min_lrs=1e-20, last_epoch=-1, warmup=0):
         """
         :param warmup: how many steps for linearly warmup lr
         """
