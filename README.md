@@ -169,12 +169,6 @@ python demo_test.py   -i demo/demo.jpg
   python test_tusimple.py --exp_dir ./experiments/exp0
   ```
 
-  Modify  directory path `exp` in `utils/lane_evaluation/Run.sh` and run it.
-
-  ```
-  cd utils/lane_evaluation
-  sh ./Run.sh
-  ```
 
 
 
