@@ -8,7 +8,7 @@ This repository contains a re-implementation in Pytorch.
 
 ### Updates
 
-- 2019 / 08 / 12: Code refined including more convenient test script and trained model.
+- 2019 / 08 / 12: Code refined including more convenient test & evaluation script and trained model.
 - 2019 / 05 / 08: Evaluation is provided.
 - 2019 / 04 / 23: Trained model converted from [official t7 model](https://github.com/XingangPan/SCNN#Testing) is provided.
 
@@ -146,7 +146,7 @@ python demo_test.py   -i demo/demo.jpg
 
 ## Evaluation
 
-* CULane Evaluation code is ported from [official implementation](<https://github.com/XingangPan/SCNN>) and an extra `CMakeLists.txt` is provided. Please build the CPP code first.
+* CULane Evaluation code is ported from [official implementation](<https://github.com/XingangPan/SCNN>) and an extra `CMakeLists.txt` is provided. 1. Please build the CPP code first.  2. Then modify `root` as absolute project path in `utils/lane_evaluation/CULane/Run.sh`.
 
   ```bash
   cd utils/lane_evaluation/CULane
