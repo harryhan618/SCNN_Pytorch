@@ -146,7 +146,10 @@ python demo_test.py   -i demo/demo.jpg
 
 ## Evaluation
 
-* CULane Evaluation code is ported from [official implementation](<https://github.com/XingangPan/SCNN>) and an extra `CMakeLists.txt` is provided. 1. Please build the CPP code first.  2. Then modify `root` as absolute project path in `utils/lane_evaluation/CULane/Run.sh`.
+* CULane Evaluation code is ported from [official implementation](<https://github.com/XingangPan/SCNN>) and an extra `CMakeLists.txt` is provided. 
+
+  1. Please build the CPP code first.  
+  2. Then modify `root` as absolute project path in `utils/lane_evaluation/CULane/Run.sh`.
 
   ```bash
   cd utils/lane_evaluation/CULane
