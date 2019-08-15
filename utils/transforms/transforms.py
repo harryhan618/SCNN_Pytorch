@@ -105,7 +105,10 @@ class Rotation(CustomTransform):
     def __init__(self, theta):
         self.theta = theta
 
-    def __call__(self, img, segLabel=None):
+    def __call__(self, sample):
+        img = sample.get('img')
+        segLabel = sample.get('segLabel', None)
+
         u = np.random.uniform()
         degree = (u-0.5) * self.theta
         R = cv2.getRotationMatrix2D((img.shape[1]//2, img.shape[0]//2), degree, 1)
@@ -113,7 +116,10 @@ class Rotation(CustomTransform):
         if segLabel is not None:
             segLabel = cv2.warpAffine(segLabel, R, (segLabel.shape[1], segLabel.shape[0]), flags=cv2.INTER_NEAREST)
 
-        return img, segLabel
+        _sample = sample.copy()
+        _sample['img'] = img
+        _sample['segLabel'] = segLabel
+        return _sample
 
     def reset_theta(self, theta):
         self.theta = theta
