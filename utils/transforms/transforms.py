@@ -153,7 +153,7 @@ class ToTensor(CustomTransform):
         if segLabel is not None:
             segLabel = torch.from_numpy(segLabel).type(torch.long)
         if exist is not None:
-            exist = torch.from_numpy(exist).type(torch.long)
+            exist = torch.from_numpy(exist).type(torch.float32)  # BCEloss requires float tensor
 
         _sample = sample.copy()
         _sample['img'] = img
