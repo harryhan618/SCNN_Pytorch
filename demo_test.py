@@ -29,7 +29,7 @@ def main():
 
     img = cv2.imread(img_path)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    x = transform(img)[0]
+    x = transform({'img': img})['img']
     x.unsqueeze_(0)
 
     save_dict = torch.load(weight_path, map_location='cpu')
@@ -53,7 +53,7 @@ def main():
     img = cv2.addWeighted(src1=lane_img, alpha=0.8, src2=img, beta=1., gamma=0.)
     cv2.imwrite("demo/demo_result.jpg", img)
 
-    for x in getLane.prob2lines(seg_pred, exist):
+    for x in getLane.prob2lines_CULane(seg_pred, exist):
         print(x)
 
     if args.visualize:
