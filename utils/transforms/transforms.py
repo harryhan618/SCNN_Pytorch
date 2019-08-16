@@ -146,15 +146,19 @@ class ToTensor(CustomTransform):
     def __call__(self, sample):
         img = sample.get('img')
         segLabel = sample.get('segLabel', None)
+        exist = sample.get('exist', None)
 
         img = img.transpose(2, 0, 1)
         img = torch.from_numpy(img).type(self.dtype) / 255.
         if segLabel is not None:
             segLabel = torch.from_numpy(segLabel).type(torch.long)
+        if exist is not None:
+            exist = torch.from_numpy(exist).type(torch.long)
 
         _sample = sample.copy()
         _sample['img'] = img
         _sample['segLabel'] = segLabel
+        _sample['exist'] = exist
         return _sample
 
 
