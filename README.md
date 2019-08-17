@@ -86,7 +86,7 @@ Tusimple_path
 | --------- | ------------------- |
 | Normal    | 82.65               |
 | Crowded   | 58.86               |
-| HLight    | 5093                |
+| HLight    | 50.93                |
 | Shadow    | 61.78               |
 | No line   | 34.13               |
 | Arrow     | 73.44               |
