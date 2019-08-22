@@ -26,7 +26,7 @@ class SCNN(nn.Module):
         self.scale_exist = 0.1
 
         self.ce_loss = nn.CrossEntropyLoss(weight=torch.tensor([self.scale_background, 1, 1, 1, 1]))
-        self.bce_loss = nn.BCELoss(reduction='sum')
+        self.bce_loss = nn.BCELoss()
 
     def forward(self, img, seg_gt=None, exist_gt=None):
         x = self.backbone(img)
@@ -40,9 +40,9 @@ class SCNN(nn.Module):
         exist_pred = self.fc(x)
 
         if seg_gt is not None and exist_gt is not None:
-            loss_seg = self.ce_loss(seg_pred, seg_gt) * self.scale_seg
-            loss_exist = self.bce_loss(exist_pred, exist_gt) / img.shape[0] * self.scale_exist
-            loss = loss_seg + loss_exist
+            loss_seg = self.ce_loss(seg_pred, seg_gt)
+            loss_exist = self.bce_loss(exist_pred, exist_gt)
+            loss = loss_seg * self.scale_seg + loss_exist * self.scale_exist
         else:
             loss_seg = torch.tensor(0, dtype=img.dtype, device=img.device)
             loss_exist = torch.tensor(0, dtype=img.dtype, device=img.device)
