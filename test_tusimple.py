@@ -2,6 +2,7 @@ import argparse
 import json
 import os
 
+import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
@@ -82,6 +83,7 @@ with torch.no_grad():
         img_name = sample['img_name']
 
         seg_pred, exist_pred = net(img)[:2]
+        seg_pred = F.softmax(seg_pred, dim=1)
         seg_pred = seg_pred.detach().cpu().numpy()
         exist_pred = exist_pred.detach().cpu().numpy()
 
@@ -132,7 +134,7 @@ with open(os.path.join(out_path, "predict_test.json"), "w") as f:
 from utils.lane_evaluation.tusimple.lane import LaneEval
 
 eval_result = LaneEval.bench_one_submit(os.path.join(out_path, "predict_test.json"),
-                                        "/mnt/lustre/hanyibo/Dataset/tusimple/test_label.json")
+                                        "/home/lion/Dataset/tusimple/test_label.json")
 print(eval_result)
 with open(os.path.join(evaluation_path, "evaluation_result.txt"), "w") as f:
     print(eval_result, file=f)

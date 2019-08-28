@@ -2,6 +2,7 @@ import argparse
 import json
 import os
 
+import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
@@ -81,6 +82,7 @@ with torch.no_grad():
         img_name = sample['img_name']
 
         seg_pred, exist_pred = net(img)[:2]
+        seg_pred = F.softmax(seg_pred, dim=1)
         seg_pred = seg_pred.detach().cpu().numpy()
         exist_pred = exist_pred.detach().cpu().numpy()
 
