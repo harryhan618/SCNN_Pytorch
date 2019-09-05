@@ -84,15 +84,15 @@ Tusimple_path
 
 | Category  | F1-measure          |
 | --------- | ------------------- |
-| Normal    | 82.65               |
-| Crowded   | 58.86               |
-| HLight    | 50.93                |
-| Shadow    | 61.78               |
-| No line   | 34.13               |
-| Arrow     | 73.44               |
-| Curve     | 65.16               |
-| Crossroad | 2424 （FP measure） |
-| Night     | 57.76               |
+| Normal    | 90.26               |
+| Crowded   | 68.23               |
+| HLight    | 61.84                |
+| Shadow    | 61.16               |
+| No line   | 43.44               |
+| Arrow     | 84.64               |
+| Curve     | 61.74               |
+| Crossroad | 2728 （FP measure） |
+| Night     | 65.32               |
 
 
 
