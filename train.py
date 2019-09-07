@@ -26,7 +26,9 @@ args = parse_args()
 
 # ------------ config ------------
 exp_dir = args.exp_dir
-exp_name = exp_dir.split['/'][-1]
+while exp_dir[-1]=='/':
+    exp_dir = exp_dir[:-1]
+exp_name = exp_dir.split('/')[-1]
 
 with open(os.path.join(exp_dir, "cfg.json")) as f:
     exp_cfg = json.load(f)
