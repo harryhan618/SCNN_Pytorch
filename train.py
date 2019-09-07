@@ -50,8 +50,9 @@ train_dataset = Dataset_Type(Dataset_Path[dataset_name], "train", transform_trai
 train_loader = DataLoader(train_dataset, batch_size=exp_cfg['dataset']['batch_size'], shuffle=True, collate_fn=train_dataset.collate, num_workers=8)
 
 # ------------ val data ------------
-transform_val = Compose(Resize(resize_shape), ToTensor(),
-                        Normalize(mean=mean, std=std))
+transform_val_img = Resize(resize_shape)
+transform_val_x = Compose(ToTensor(), Normalize(mean=mean, std=std))
+transform_val = Compose(transform_val_img, transform_val_x)
 val_dataset = Dataset_Type(Dataset_Path[dataset_name], "val", transform_val)
 val_loader = DataLoader(val_dataset, batch_size=8, collate_fn=val_dataset.collate, num_workers=4)
 
@@ -152,7 +153,7 @@ def val(epoch):
                 for b in range(len(img)):
                     img_name = sample['img_name'][b]
                     img = cv2.imread(img_name)
-                    img = cv2.resize(img, (800, 288))
+                    img = transform_val_img({'img': img})['img']
 
                     lane_img = np.zeros_like(img)
                     color = np.array([[255, 125, 0], [0, 255, 0], [0, 0, 255], [0, 255, 255]], dtype='uint8')
