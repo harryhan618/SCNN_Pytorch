@@ -109,7 +109,7 @@ save_name = os.path.join('experiments', 'vgg_SCNN_DULR_w9', 'vgg_SCNN_DULR_w9.pt
 torch.save(model2, save_name)
 
 # load and save again
-net = SCNN(pretrained=False)
+net = SCNN(input_size=(800, 288), pretrained=False)
 d = torch.load(save_name)
 net.load_state_dict(d, strict=False)
 for m in net.backbone.modules():
