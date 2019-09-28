@@ -1,6 +1,6 @@
 {
   "device": "cuda:0",
-  "MAX_ITER": 30,
+  "MAX_EPOCHES": 30,
 
   "dataset": {
     "dataset_name": "CULane",

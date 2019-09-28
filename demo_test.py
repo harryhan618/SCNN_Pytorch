@@ -9,8 +9,8 @@ from utils.transforms import *
 net = SCNN(input_size=(800, 288), pretrained=False)
 mean=(0.3598, 0.3653, 0.3662) # CULane mean, std
 std=(0.2573, 0.2663, 0.2756)
-transform = Compose(Resize((800, 288)), ToTensor(),
-                    Normalize(mean=mean, std=std))
+transform_img = Resize((800, 288))
+transform_to_net = Compose(ToTensor(), Normalize(mean=mean, std=std))
 
 
 def parse_args():
@@ -29,7 +29,8 @@ def main():
 
     img = cv2.imread(img_path)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    x = transform({'img': img})['img']
+    img = transform_img({'img': img})['img']
+    x = transform_to_net({'img': img})['img']
     x.unsqueeze_(0)
 
     save_dict = torch.load(weight_path, map_location='cpu')
@@ -43,7 +44,6 @@ def main():
     exist = [1 if exist_pred[0, i] > 0.5 else 0 for i in range(4)]
 
     img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-    img = cv2.resize(img, (800, 288))
     lane_img = np.zeros_like(img)
     color = np.array([[255, 125, 0], [0, 255, 0], [0, 0, 255], [0, 255, 255]], dtype='uint8')
     coord_mask = np.argmax(seg_pred, axis=0)

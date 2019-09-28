@@ -1,6 +1,6 @@
 {
   "device": "cuda:0",
-  "MAX_ITER": 60,
+  "MAX_EPOCHES": 60,
 
   "dataset": {
     "dataset_name": "Tusimple",

@@ -3,7 +3,7 @@
 
   "dataset": {
     "dataset_name": "CULane",
-    "resize_shape": [512, 288]
+    "resize_shape": [800, 288]
   }
 
 

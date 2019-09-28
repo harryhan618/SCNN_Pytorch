@@ -64,7 +64,7 @@ net = net.to(device)
 net = torch.nn.DataParallel(net)
 
 optimizer = optim.SGD(net.parameters(), **exp_cfg['optim'])
-lr_scheduler = PolyLR(optimizer, 0.9, exp_cfg['MAX_ITER'])
+lr_scheduler = PolyLR(optimizer, 0.9, **exp_cfg['lr_scheduler'])
 best_val_loss = 1e6
 
 
@@ -209,7 +209,7 @@ def main():
     else:
         start_epoch = 0
 
-    for epoch in range(start_epoch, exp_cfg['MAX_ITER']):
+    for epoch in range(start_epoch, exp_cfg['MAX_EPOCHES']):
         train(epoch)
         if epoch % 1 == 0:
             print("\nValidation For Experiment: ", exp_dir)
