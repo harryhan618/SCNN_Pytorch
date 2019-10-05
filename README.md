@@ -119,7 +119,7 @@ python demo_test.py   -i demo/demo.jpg
 
 ## Train 
 
-1. Specify an experiment directory, e.g. `experiments/exp0`.  Assign the path to variable `exp_dir` in `train.py`.
+1. Specify an experiment directory, e.g. `experiments/exp0`. 
 
 2. Modify the hyperparameters in `experiments/exp0/cfg.json`.
 
@@ -132,7 +132,7 @@ python demo_test.py   -i demo/demo.jpg
 4. Monitor on tensorboard:
 
    ```bash
-   tensorboard --logdir='experiments/exp0' > experiments/exp0/board.log 2>&1 &
+   tensorboard --logdir='experiments/exp0'
    ```
 
 **Note**
