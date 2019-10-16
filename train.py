@@ -209,6 +209,7 @@ def main():
     else:
         start_epoch = 0
 
+    exp_cfg['MAX_EPOCHES'] = int(np.ceil(exp_cfg['lr_scheduler']['max_iter'] / len(train_loader)))
     for epoch in range(start_epoch, exp_cfg['MAX_EPOCHES']):
         train(epoch)
         if epoch % 1 == 0:
