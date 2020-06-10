@@ -6,7 +6,6 @@
  ************************************************************************/
 
 #include "counter.hpp"
-#include <thread>
 
 double Counter::get_precision(void)
 {
@@ -69,13 +68,13 @@ vector<int> Counter::count_im_pair(const vector<vector<Point2f> > &anno_lanes, c
 		for(int j=0; j<detect_lanes.size(); j++)
 		{
 			const vector<Point2f> &curr_detect_lane = detect_lanes[j];
-			similarity[i][j] = lane_compare->get_lane_similarity(ref(curr_anno_lane), ref(curr_detect_lane));
+			similarity[i][j] = lane_compare->get_lane_similarity(curr_anno_lane, curr_detect_lane);
 		}
 	}
 
 
 
-	makeMatch(ref(similarity), ref(anno_match), ref(detect_match));
+	makeMatch(similarity, anno_match, detect_match);
 
 	
 	int curr_tp = 0;

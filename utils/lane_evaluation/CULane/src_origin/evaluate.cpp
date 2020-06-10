@@ -17,10 +17,6 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 
-#include <vector>
-#include <thread>
-#include <mutex>
-
 using namespace std;
 using namespace cv;
 
@@ -43,50 +39,23 @@ void help(void)
 
 void read_lane_file(const string &file_name, vector<vector<Point2f> > &lanes);
 void visualize(string &full_im_name, vector<vector<Point2f> > &anno_lanes, vector<vector<Point2f> > &detect_lanes, vector<int> anno_match, int width_lane);
-void worker_func(vector<string> &lines_list_v, int start, int end, int &tp, int &fp, int &fn);
-void update_tp_fp_fn(int &tp, int &fp, int &fn, int _tp, int _fp, int _fn);
-
-double get_precision(int tp, int fp, int fn)
-{
-	cerr<<"tp: "<<tp<<" fp: "<<fp<<" fn: "<<fn<<endl;
-	if(tp+fp == 0)
-	{
-		cerr<<"no positive detection"<<endl;
-		return -1;
-	}
-	return tp/double(tp + fp);
-}
-
-double get_recall(int tp, int fp, int fn)
-{
-	if(tp+fn == 0)
-	{
-		cerr<<"no ground truth positive"<<endl;
-		return -1;
-	}
-	return tp/double(tp + fn);
-}
-
-mutex myMutex; 
-string anno_dir = "/data/driving/eval_data/anno_label/";
-string detect_dir = "/data/driving/eval_data/predict_label/";
-string im_dir = "/data/driving/eval_data/img/";
-string list_im_file = "/data/driving/eval_data/img/all.txt";
-string output_file = "./output.txt";
-int width_lane = 10;
-double iou_threshold = 0.4;
-int im_width = 1920;
-int im_height = 1080;
-int oc;
-bool show = false;
-int frame = 1;
-int NUM_PROCESS=20;
 
 int main(int argc, char **argv)
 {
 	// process params
-	
-	while((oc = getopt(argc, argv, "ha:d:i:l:w:t:c:r:sf:o:p:")) != -1)
+	string anno_dir = "/data/driving/eval_data/anno_label/";
+	string detect_dir = "/data/driving/eval_data/predict_label/";
+	string im_dir = "/data/driving/eval_data/img/";
+	string list_im_file = "/data/driving/eval_data/img/all.txt";
+	string output_file = "./output.txt";
+	int width_lane = 10;
+	double iou_threshold = 0.4;
+	int im_width = 1920;
+	int im_height = 1080;
+	int oc;
+	bool show = false;
+	int frame = 1;
+	while((oc = getopt(argc, argv, "ha:d:i:l:w:t:c:r:sf:o:")) != -1)
 	{
 		switch(oc)
 		{
@@ -126,25 +95,21 @@ int main(int argc, char **argv)
 			case 'o':
 				output_file = optarg;
 				break;
-			case 'p':
-			    NUM_PROCESS = atoi(optarg);
-			    break;
 		}
 	}
 
 
-	cerr<<"------------Configuration---------"<<endl;
-	cerr << "using multi-thread, num:" << NUM_PROCESS << endl;
-	cerr<<"anno_dir: "<<anno_dir<<endl;
-	cerr<<"detect_dir: "<<detect_dir<<endl;
-	cerr<<"im_dir: "<<im_dir<<endl;
-	cerr<<"list_im_file: "<<list_im_file<<endl;
-	cerr<<"width_lane: "<<width_lane<<endl;
-	cerr<<"iou_threshold: "<<iou_threshold<<endl;
-	cerr<<"im_width: "<<im_width<<endl;
-	cerr<<"im_height: "<<im_height<<endl;
-	cerr<<"-----------------------------------"<<endl;
-	cerr<<"Evaluating the results..."<<endl;
+	cout<<"------------Configuration---------"<<endl;
+	cout<<"anno_dir: "<<anno_dir<<endl;
+	cout<<"detect_dir: "<<detect_dir<<endl;
+	cout<<"im_dir: "<<im_dir<<endl;
+	cout<<"list_im_file: "<<list_im_file<<endl;
+	cout<<"width_lane: "<<width_lane<<endl;
+	cout<<"iou_threshold: "<<iou_threshold<<endl;
+	cout<<"im_width: "<<im_width<<endl;
+	cout<<"im_height: "<<im_height<<endl;
+	cout<<"-----------------------------------"<<endl;
+	cout<<"Evaluating the results..."<<endl;
 	// this is the max_width and max_height
 
 	if(width_lane<1)
@@ -163,72 +128,47 @@ int main(int argc, char **argv)
 	}
 
 
-	vector<string> lines_list_v;
-	string line;
-	while(getline(ifs_im_list, line)) {
-		lines_list_v.push_back(line);
+	Counter counter(im_width, im_height, iou_threshold, width_lane);
+	
+	vector<int> anno_match;
+	string sub_im_name;
+	int count = 0;
+	while(getline(ifs_im_list, sub_im_name))
+	{
+		count++;
+		if (count < frame)
+			continue;
+		string full_im_name = im_dir + sub_im_name;
+		string sub_txt_name =  sub_im_name.substr(0, sub_im_name.find_last_of(".")) + ".lines.txt";
+		string anno_file_name = anno_dir + sub_txt_name;
+		string detect_file_name = detect_dir + sub_txt_name;
+		vector<vector<Point2f> > anno_lanes;
+		vector<vector<Point2f> > detect_lanes;
+		read_lane_file(anno_file_name, anno_lanes);
+		read_lane_file(detect_file_name, detect_lanes);
+		//cerr<<count<<": "<<full_im_name<<endl;
+		anno_match = counter.count_im_pair(anno_lanes, detect_lanes);
+		if (show)
+		{
+			visualize(full_im_name, anno_lanes, detect_lanes, anno_match, width_lane);
+			waitKey(0);
+		}
 	}
 	ifs_im_list.close();
-
-	int TP=0, FP=0, FN=0; //result
-	int NUM = lines_list_v.size();
-    int batch_size = NUM / NUM_PROCESS;
-	vector<thread> thread_v;
-	for (int i=0; i<NUM_PROCESS; i++){
-			int _start=batch_size*i, _end= batch_size*(i+1);
-			_end = (_end>NUM) ? NUM:_end;
-			thread_v.push_back(thread(worker_func, ref(lines_list_v), _start, _end, ref(TP), ref(FP), ref(FN)));
-	}
-
-	for (int i=0; i<thread_v.size(); i++)
-        thread_v[i].join();
-
-
-	// Counter counter(im_width, im_height, iou_threshold, width_lane);
 	
-	// vector<int> anno_match;
-	// string sub_im_name;
-	// int count = 0;
-
-
-	// while(getline(ifs_im_list, sub_im_name))
-	// {
-	// 	count++;
-	// 	if (count < frame)
-	// 		continue;
-	// 	string full_im_name = im_dir + sub_im_name;
-	// 	string sub_txt_name =  sub_im_name.substr(0, sub_im_name.find_last_of(".")) + ".lines.txt";
-	// 	string anno_file_name = anno_dir + sub_txt_name;
-	// 	string detect_file_name = detect_dir + sub_txt_name;
-	// 	vector<vector<Point2f> > anno_lanes;
-	// 	vector<vector<Point2f> > detect_lanes;
-	// 	read_lane_file(anno_file_name, anno_lanes);
-	// 	read_lane_file(detect_file_name, detect_lanes);
-	// 	//cerr<<count<<": "<<full_im_name<<endl;
-	// 	anno_match = counter.count_im_pair(anno_lanes, detect_lanes);
-	// 	if (show)
-	// 	{
-	// 		visualize(full_im_name, anno_lanes, detect_lanes, anno_match, width_lane);
-	// 		waitKey(0);
-	// 	}
-	// }
-	// ifs_im_list.close();
-
-	cerr << "list images num: " << lines_list_v.size() << endl;
-	
-	double precision = get_precision(TP, FP, FN);
-	double recall = get_recall(TP, FP, FN);
+	double precision = counter.get_precision();
+	double recall = counter.get_recall();
 	double F = 2 * precision * recall / (precision + recall);	
 	cerr<<"finished process file"<<endl;
-	cerr<<"precision: "<<precision<<endl;
-	cerr<<"recall: "<<recall<<endl;
-	cerr<<"Fmeasure: "<<F<<endl;
-	cerr<<"----------------------------------"<<endl;
+	cout<<"precision: "<<precision<<endl;
+	cout<<"recall: "<<recall<<endl;
+	cout<<"Fmeasure: "<<F<<endl;
+	cout<<"----------------------------------"<<endl;
 
 	ofstream ofs_out_file;
 	ofs_out_file.open(output_file, ios::out);
 	ofs_out_file<<"file: "<<output_file<<endl;
-	ofs_out_file<<"tp: "<< TP <<" fp: "<< FP <<" fn: "<< FN <<endl;
+	ofs_out_file<<"tp: "<<counter.getTP()<<" fp: "<<counter.getFP()<<" fn: "<<counter.getFN()<<endl;
 	ofs_out_file<<"precision: "<<precision<<endl;
 	ofs_out_file<<"recall: "<<recall<<endl;
 	ofs_out_file<<"Fmeasure: "<<F<<endl<<endl;
@@ -338,40 +278,4 @@ void visualize(string &full_im_name, vector<vector<Point2f> > &anno_lanes, vecto
 	imshow("visualize", img);
 	namedWindow("visualize2", 1);
 	imshow("visualize2", img2);
-}
-
-void update_tp_fp_fn(int &tp, int &fp, int &fn, int _tp, int _fp, int _fn)
-{
-	std::lock_guard<std::mutex> guard(myMutex);
-	tp += _tp;
-	fp += _fp;
-	fn += _fn;
-}
-
-void worker_func(vector<string> &lines_list_v, int start, int end, int &tp, int &fp, int &fn)
-{
-	Counter counter(im_width, im_height, iou_threshold, width_lane);
-
-	vector<int> anno_match;
-	string sub_im_name;
-	int count = 0;
-
-	for (int i=start; i<end; i++) {
-		sub_im_name = lines_list_v[i];
-		count++;
-
-		string full_im_name = im_dir + sub_im_name;
-		string sub_txt_name =  sub_im_name.substr(0, sub_im_name.find_last_of(".")) + ".lines.txt";
-		string anno_file_name = anno_dir + sub_txt_name;
-		string detect_file_name = detect_dir + sub_txt_name;
-		vector<vector<Point2f> > anno_lanes;
-		vector<vector<Point2f> > detect_lanes;
-
-		read_lane_file(anno_file_name, ref(anno_lanes));
-		read_lane_file(detect_file_name, ref(detect_lanes));
-		
-		anno_match = counter.count_im_pair(ref(anno_lanes), ref(detect_lanes));
-	}
-
-	update_tp_fp_fn(ref(tp), ref(fp), ref(fn), counter.getTP(), counter.getFP(), counter.getFN());
 }
