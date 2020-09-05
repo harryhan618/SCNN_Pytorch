@@ -1,6 +1,7 @@
 import numpy as np
 from sklearn.linear_model import LinearRegression
 import json as json
+import platform
 
 
 class LaneEval(object):
@@ -67,6 +68,8 @@ class LaneEval(object):
             if 'raw_file' not in pred or 'lanes' not in pred or 'run_time' not in pred:
                 raise Exception('raw_file or lanes or run_time not in some predictions.')
             raw_file = pred['raw_file']
+            if platform.system() == 'Windows':
+                raw_file = raw_file.replace('\\', '/')  # windows环境需要加这行代码
             pred_lanes = pred['lanes']
             run_time = pred['run_time']
             if raw_file not in gts:
