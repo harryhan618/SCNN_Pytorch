@@ -134,7 +134,7 @@ with open(os.path.join(out_path, "predict_test.json"), "w") as f:
 from utils.lane_evaluation.tusimple.lane import LaneEval
 
 eval_result = LaneEval.bench_one_submit(os.path.join(out_path, "predict_test.json"),
-                                        "/home/lion/Dataset/tusimple/test_label.json")
+                                        os.path.join(Dataset_Path['Tusimple'], 'test_label.json'))
 print(eval_result)
 with open(os.path.join(evaluation_path, "evaluation_result.txt"), "w") as f:
     print(eval_result, file=f)
