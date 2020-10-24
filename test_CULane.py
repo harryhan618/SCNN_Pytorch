@@ -101,9 +101,10 @@ with torch.no_grad():
 
             with open(save_name, "w") as f:
                 for l in lane_coords:
-                    for (x, y) in l:
-                        print("{} {}".format(x, y), end=" ", file=f)
-                    print(file=f)
+                    if l:  # No printing for []
+                        for (x, y) in l:
+                            print("{} {}".format(x, y), end=" ", file=f)
+                        print(file=f)
 
         progressbar.update(1)
 progressbar.close()
