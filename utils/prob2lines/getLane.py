@@ -64,6 +64,8 @@ def prob2lines_tusimple(seg_pred, exist, resize_shape=None, smooth=True, y_px_ga
             prob_map = cv2.blur(prob_map, (9, 9), borderType=cv2.BORDER_REPLICATE)
         if exist[i] > 0:
             coords = getLane_tusimple(prob_map, y_px_gap, pts, thresh, resize_shape)
+            if (coords==0).all():
+                continue
             coordinates.append(
                 [[coords[j], H - 10 - j * y_px_gap] if coords[j] > 0 else [-1, H - 10 - j * y_px_gap] for j in
                  range(pts)])
@@ -131,6 +133,8 @@ def prob2lines_CULane(seg_pred, exist, resize_shape=None, smooth=True, y_px_gap=
             prob_map = cv2.blur(prob_map, (9, 9), borderType=cv2.BORDER_REPLICATE)
         if exist[i] > 0:
             coords = getLane_CULane(prob_map, y_px_gap, pts, thresh, resize_shape)
+            if (coords==0).all():
+                continue
             coordinates.append([[coords[j], H - 1 - j * y_px_gap] for j in range(pts) if coords[j] > 0])
 
     return coordinates
