@@ -1,4 +1,7 @@
+pillow
 numpy
 opencv-python
-torch>=0.4.1
+torch
 torchvision
+tensorflow
+tqdm
