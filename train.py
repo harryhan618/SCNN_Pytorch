@@ -38,7 +38,7 @@ resize_shape = tuple(exp_cfg['dataset']['resize_shape'])
 device = torch.device(exp_cfg['device'])
 tensorboard = TensorBoard(exp_dir)
 
-num_workers = os.cpu_count() - 2
+num_workers = max(1, os.cpu_count() - 2)
 
 # ------------ train data ------------
 # # CULane mean, std
