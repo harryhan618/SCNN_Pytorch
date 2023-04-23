@@ -5,3 +5,4 @@ torch
 torchvision
 tensorflow
 tqdm
+python-dotenv

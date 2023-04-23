@@ -11,6 +11,10 @@ from config import *
 from model import SCNN
 from utils.prob2lines import getLane
 from utils.transforms import *
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 
 def parse_args():
@@ -107,6 +111,7 @@ with torch.no_grad():
 
         progressbar.update(1)
 progressbar.close()
+culane_path = os.environ.get("CULANE_PATH")
 
 # ---- evaluate ----
-os.system("sh utils/lane_evaluation/CULane/Run.sh " + exp_name)
+os.system(f"sh utils/lane_evaluation/CULane/Run.sh {exp_name} {culane_path}")
