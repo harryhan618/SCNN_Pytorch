@@ -6,6 +6,9 @@ __pycache__/
 # C extensions
 *.so
 
+# Binaries
+utils/lane_evaluation/CULane/evaluate
+
 # Distribution / packaging
 .Python
 env/
@@ -105,6 +108,8 @@ data/
 input/
 saved/
 datasets/
+coord_output/
+evaluate/
 
 # editor, os cache directory
 .vscode/

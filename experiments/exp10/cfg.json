@@ -4,17 +4,16 @@
 
   "dataset": {
     "dataset_name": "CULane",
-    "batch_size": 8,
+    "batch_size": 4,
     "resize_shape": [800, 288]
   },
 
   "optim": {
-    "lr": 16e-2,
+    "lr": 0.01,
     "momentum": 0.9,
-    "weight_decay": 1e-3,
+    "weight_decay": 0.0001,
     "nesterov": true
   },
-
   "lr_scheduler": {
     "warmup": 50,
     "max_iter": 8000
