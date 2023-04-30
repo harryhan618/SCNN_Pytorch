@@ -1,6 +1,6 @@
 root=/home/lion/SCNN_Pytorch/
 exp=$1
-data_dir=/home/lion/Dataset/CULane/data/CULane/
+data_dir=$2
 detect_dir=${root}/experiments/${exp}/coord_output/
 bin_dir=${root}/utils/lane_evaluation/CULane
 
